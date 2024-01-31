@@ -4,21 +4,6 @@ from consts import *
 from PIL import Image, ImageTk
 
 
-LOGO_WIDTH = 600
-LOGO_HEIGHT = 200
-
-FORGOT_PSWD_WIDTH = 300
-FORGOT_PSWD_HEIGHT = 60
-FORGOT_PSWD_FONT = ("Arial", 20)
-
-ENTRY_WIDTH = 300
-ENTRY_HEIGHT = 60
-ENTRY_FONT = ("Arial", 30)
-
-LOGIN_BTN_WIDTH = 300
-LOGIN_BTN_HEIGHT = 60
-LOGIN_BTN_FONT = ("Arial", 30)
-
 class GUI(Ctk.CTk):
     def __init__(self, dark_theme=True, *args, **kwargs):
         super().__init__(*args, **kwargs)
