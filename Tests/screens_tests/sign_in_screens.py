@@ -43,6 +43,7 @@ class LoginFrame(Ctk.CTkFrame):
         self.master.frame.grid(row=1, column=0, sticky=STICKY_LAYOUT)
         
 class SignUpFrame(Ctk.CTkFrame):
+    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.grid(sticky=STICKY_LAYOUT)    
@@ -52,43 +53,43 @@ class SignUpFrame(Ctk.CTkFrame):
         self.passwords_match = False
         
         self.title = Ctk.CTkLabel(self, text="Sign Up", font=(GENERAL_FONT, TITLE_FONT_SIZE))
-        self.title.grid(row=0, column=0, pady=10)
+        self.title.grid(row=0, column=0, columnspan=MID_COL_SPAN_SIGNUP, pady=10)
 
         self.username = Ctk.CTkEntry(self, placeholder_text="Username", width=ENTRY_WIDTH, height=ENTRY_HEIGHT, font=ENTRY_FONT)
-        self.username.grid(row=1, column=0, pady=10)
+        self.username.grid(row=1, column=0, padx=SIGNUP_ENTRY_PADX, pady=SIGNUP_ENTRY_PADY)
         
         self.email = Ctk.CTkEntry(self, placeholder_text="Email", width=ENTRY_WIDTH, height=ENTRY_HEIGHT, font=ENTRY_FONT)
-        self.email.grid(row=2, column=0, pady=10)
+        self.email.grid(row=1, column=1, padx=SIGNUP_ENTRY_PADX, pady=SIGNUP_ENTRY_PADY)
 
         self.password = Ctk.CTkEntry(self, placeholder_text="Password", show="*", width=ENTRY_WIDTH, height=ENTRY_HEIGHT, font=ENTRY_FONT)
-        self.password.grid(row=3, column=0, pady=10)
+        self.password.grid(row=2, column=0, padx=SIGNUP_ENTRY_PADX, pady=SIGNUP_ENTRY_PADY)
         
         self.confirm_password = Ctk.CTkEntry(self, placeholder_text="Confirm Password", show="*", width=ENTRY_WIDTH, height=ENTRY_HEIGHT, font=ENTRY_FONT)
-        self.confirm_password.grid(row=4, column=0, pady=10)
+        self.confirm_password.grid(row=2, column=1, padx=SIGNUP_ENTRY_PADX, pady=SIGNUP_ENTRY_PADY)
 
         self.not_matching_passwords = Ctk.CTkLabel(self, text=" * Passwords do not match", font=(GENERAL_FONT, 20), text_color="red")
         self.invalid_username = Ctk.CTkLabel(self, text=" * Invalid username", font=(GENERAL_FONT, 20), text_color="red")
         self.invalid_password = Ctk.CTkLabel(self, text=" * Invalid password", font=(GENERAL_FONT, 20), text_color="red")
 
         self.already_have_account = Ctk.CTkButton(self, text="Already have an account?", command=self.already_have_account)
-        self.already_have_account.grid(row=8, column=0, pady=10)
+        self.already_have_account.grid(row=8, column=0, columnspan=MID_COL_SPAN_SIGNUP, pady=10)
         
         self.sign_up = Ctk.CTkButton(self, text="Sign Up", command=self.sign_up, width=LOGIN_BTN_WIDTH, height=LOGIN_BTN_HEIGHT, font=LOGIN_BTN_FONT)
-        self.sign_up.grid(row=9, column=0, pady=10)
+        self.sign_up.grid(row=9, column=0, columnspan=MID_COL_SPAN_SIGNUP, padx=SIGNUP_X_PADDING, pady=SIGNUP_Y_PADDING)
 
     def sign_up(self):
         if self.password.get() == self.confirm_password.get():
             self.passwords_match = True; self.not_matching_passwords.grid_forget()
         else:
-            self.passwords_match = False; self.not_matching_passwords.grid(row=5, column=0, pady=SIGN_UP_ERROR_PADY)
+            self.passwords_match = False; self.not_matching_passwords.grid(row=5, column=0, columnspan=MID_COL_SPAN_SIGNUP, pady=SIGN_UP_ERROR_PADY)
         
         if len(self.username.get()) < 4: 
-            self.invalid_username.grid(row=6, column=0, pady=SIGN_UP_ERROR_PADY)
+            self.invalid_username.grid(row=6, column=0, columnspan=MID_COL_SPAN_SIGNUP, pady=SIGN_UP_ERROR_PADY)
         else: 
             self.invalid_username.grid_forget()
             
         if len(self.password.get()) < 4:
-            self.invalid_password.grid(row=7, column=0, pady=SIGN_UP_ERROR_PADY)
+            self.invalid_password.grid(row=7, column=0, columnspan=MID_COL_SPAN_SIGNUP, pady=SIGN_UP_ERROR_PADY)
         else:
             self.invalid_password.grid_forget()
             

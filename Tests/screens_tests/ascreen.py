@@ -12,9 +12,9 @@ class GUI(Ctk.CTk):
         self.resizable(False, False)
         self.columnconfigure(0, weight=1)
         self.title("Watchapp")
-        self.logo = LogoFrame(self)
+        self.logo = LogoFrame(self, fg_color="transparent")
         self.logo.grid(row=0, column=0, sticky=STICKY_LAYOUT)
-        self.frame = SignUpFrame(self)
+        self.frame = SignUpFrame(self, fg_color="#353438")
         self.frame.grid(row=1, column=0, sticky=STICKY_LAYOUT)
 
 
@@ -25,7 +25,9 @@ class LogoFrame(Ctk.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
-        logoimage = Image.open(f"C:/Networks/Watchapp/tests/screens_tests/{"dark_logo" if Ctk.get_appearance_mode() == "Dark" else "light_logo"}.png")
+
+        logo_theme = "dark_logo" if Ctk.get_appearance_mode() == "Dark" else "light_logo"
+        logoimage = Image.open(f"C:/Dev/school/Watchapp/Tests/screens_tests/{logo_theme}.png")
         logoimage = logoimage.resize((LOGO_WIDTH, LOGO_HEIGHT))
         photoimage = ImageTk.PhotoImage(logoimage)
         self.logo = Ctk.CTkLabel(self, text="", image=photoimage)
@@ -36,7 +38,7 @@ class LogoFrame(Ctk.CTkFrame):
 
 
 def main():
-    root = GUI()
+    root = GUI(dark_theme=True)
     root.mainloop()
 
 if __name__ == "__main__":
