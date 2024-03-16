@@ -27,7 +27,7 @@ class LogoFrame(Ctk.CTkFrame):
 
 
         logo_theme = "dark_logo" if Ctk.get_appearance_mode() == "Dark" else "light_logo"
-        logoimage = Image.open(f"C:/Dev/school/Watchapp/Tests/screens_tests/{logo_theme}.png")
+        logoimage = Image.open(f"C:/Dev/Watchapp/Tests/screens_tests/{logo_theme}.png")
         logoimage = logoimage.resize((LOGO_WIDTH, LOGO_HEIGHT))
         photoimage = ImageTk.PhotoImage(logoimage)
         self.logo = Ctk.CTkLabel(self, text="", image=photoimage)
