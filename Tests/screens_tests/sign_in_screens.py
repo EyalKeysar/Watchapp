@@ -13,7 +13,7 @@ class LoginFrame(Ctk.CTkFrame):
         self.title = Ctk.CTkLabel(self, text="Login", font=(GENERAL_FONT, TITLE_FONT_SIZE))
         self.title.grid(row=0, column=0, pady=10)
 
-        self.username = Ctk.CTkEntry(self, placeholder_text="Username", width=ENTRY_WIDTH, height=ENTRY_HEIGHT, font=ENTRY_FONT)
+        self.username = Ctk.CTkEntry(self, placeholder_text="Email Address", width=ENTRY_WIDTH, height=ENTRY_HEIGHT, font=ENTRY_FONT)
         self.username.grid(row=1, column=0, pady=10)
 
         self.password = Ctk.CTkEntry(self, placeholder_text="Password", show="*", width=ENTRY_WIDTH, height=ENTRY_HEIGHT, font=ENTRY_FONT)
@@ -39,8 +39,8 @@ class LoginFrame(Ctk.CTkFrame):
         print("Doesn't have an account?")
         # Load Sign Up frame
         self.grid_forget()
-        self.master.frame = SignUpFrame(self.master)
-        self.master.frame.grid(row=1, column=0, sticky=STICKY_LAYOUT)
+        self.master.frame = SignUpFrame(self.master, fg_color=BG_COLOR)
+        self.master.frame.grid(row=1, column=0, pady=DIST_FROM_LOGO, sticky=STICKY_LAYOUT)
         
 class SignUpFrame(Ctk.CTkFrame):
     
@@ -101,5 +101,5 @@ class SignUpFrame(Ctk.CTkFrame):
         print("Already have an account?")
         # Load Login frame
         self.grid_forget()
-        self.master.frame = LoginFrame(self.master)
-        self.master.frame.grid(row=1, column=0, sticky=STICKY_LAYOUT)
+        self.master.frame = LoginFrame(self.master, fg_color=BG_COLOR)
+        self.master.frame.grid(row=1, column=0, pady=DIST_FROM_LOGO, sticky=STICKY_LAYOUT)
