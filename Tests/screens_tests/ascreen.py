@@ -31,9 +31,23 @@ class LogoFrame(Ctk.CTkFrame):
         label = Ctk.CTkLabel(self, text="Watchapp", font=("Arial", 30), fg_color=kwargs.get("fg_color"))
         label.grid(row=0, column=0, pady=10, padx=10, sticky="w")
         
-        connection_status = Ctk.CTkLabel(self, text=DISCONNECTED_TEXT, font=("Arial", 30), fg_color=kwargs.get("fg_color"), text_color=DISCONNECTED_COLOR)
-        connection_status.grid(row=0, column=0, pady=10, padx=10, sticky="e")
+        self.connection_status = Ctk.CTkLabel(self, text=DISCONNECTED_TEXT, font=("Arial", 30), fg_color=kwargs.get("fg_color"), text_color=DISCONNECTED_COLOR)
+        self.connection_status.grid(row=0, column=0, pady=10, padx=10, sticky="e")
+        self.update_connection_status()
+        
+    
+    def update_connection_status(self):
+        try:
+            raise NotImplementedError
+            status = False # TODO: get status from server
+            if status:
+                self.connection_status.configure(text=CONNECTED_TEXT, text_color=CONNECTED_COLOR)
+            else:
+                self.connection_status.configure(text=DISCONNECTED_TEXT, text_color=DISCONNECTED_COLOR)
 
+        except:
+            pass
+        self.after(1000, self.update_connection_status)
 
 def main():
     root = GUI(dark_theme=True)
