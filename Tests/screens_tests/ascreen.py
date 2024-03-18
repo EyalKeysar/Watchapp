@@ -12,6 +12,10 @@ class GUI(Ctk.CTk):
         self.resizable(False, False)
         self.columnconfigure(0, weight=1)
         self.title("Watchapp")
+        
+        # bg = tk.PhotoImage(file="C:/Networks/Watchapp/tests/screens_tests/dark_bg.jpg")
+        #make it bg
+        
         self.logo = LogoFrame(self, fg_color=BG_COLOR)
         self.logo.grid(row=0, column=0, sticky="ew")
         self.frame = SignUpFrame(self, fg_color=BG_COLOR)
@@ -26,9 +30,9 @@ class LogoFrame(Ctk.CTkFrame):
 
         label = Ctk.CTkLabel(self, text="Watchapp", font=("Arial", 30), fg_color=kwargs.get("fg_color"))
         label.grid(row=0, column=0, pady=10, padx=10, sticky="w")
-
-
-
+        
+        connection_status = Ctk.CTkLabel(self, text=DISCONNECTED_TEXT, font=("Arial", 30), fg_color=kwargs.get("fg_color"), text_color=DISCONNECTED_COLOR)
+        connection_status.grid(row=0, column=0, pady=10, padx=10, sticky="e")
 
 
 def main():
