@@ -1,42 +1,57 @@
 import tkinter as tk
 import customtkinter as Ctk
-from consts import *
+from .consts import *
 from PIL import Image, ImageTk
-from sign_in_screens import SignUpFrame, LoginFrame
+from .sign_in_screens import SignUpFrame, LoginFrame
 
 class GUI(Ctk.CTk):
-    def __init__(self, dark_theme=True, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, server_api, dark_theme=True):
+        self.server_api = server_api
+        super().__init__()
         Ctk.set_appearance_mode("Dark") if dark_theme else Ctk.set_appearance_mode("Light")
         self.geometry(f"{SCREEN_WIDTH}x{SCREEN_HEIGHT}")
         self.resizable(False, False)
         self.columnconfigure(0, weight=1)
-        self.title("Watchapp")
-        self.logo = LogoFrame(self, fg_color="transparent")
-        self.logo.grid(row=0, column=0, sticky=STICKY_LAYOUT)
-        self.frame = SignUpFrame(self, fg_color="#353438")
-        self.frame.grid(row=1, column=0, sticky=STICKY_LAYOUT)
+        self.title(self.server_api.get_info())
+        
+        # bg = tk.PhotoImage(file="C:/Networks/Watchapp/tests/screens_tests/dark_bg.jpg")
+        #make it bg
+        
+        self.logo = LogoFrame(self, fg_color=BG_COLOR)
+        self.logo.grid(row=0, column=0, sticky="ew")
+        self.frame = SignUpFrame(self.server_api, self, fg_color=BG_COLOR)
+        self.frame.grid(row=1, column=0, pady=DIST_FROM_LOGO, sticky=STICKY_LAYOUT)
 
 
 class LogoFrame(Ctk.CTkFrame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.grid(sticky=STICKY_LAYOUT)
+        
         self.grid_columnconfigure(0, weight=1)
-        self.grid_rowconfigure(0, weight=1)
 
+        label = Ctk.CTkLabel(self, text="Watchapp", font=("Arial", 30), fg_color=kwargs.get("fg_color"))
+        label.grid(row=0, column=0, pady=10, padx=10, sticky="w")
+        
+        self.connection_status = Ctk.CTkLabel(self, text=DISCONNECTED_TEXT, font=("Arial", 30), fg_color=kwargs.get("fg_color"), text_color=DISCONNECTED_COLOR)
+        self.connection_status.grid(row=0, column=0, pady=10, padx=10, sticky="e")
+        self.update_connection_status()
+        
+    
+    def update_connection_status(self):
+        try:
+            raise NotImplementedError
+            status = False # TODO: get status from server
+            if status:
+                self.connection_status.configure(text=CONNECTED_TEXT, text_color=CONNECTED_COLOR)
+            else:
+                self.connection_status.configure(text=DISCONNECTED_TEXT, text_color=DISCONNECTED_COLOR)
 
-        logo_theme = "dark_logo" if Ctk.get_appearance_mode() == "Dark" else "light_logo"
-        logoimage = Image.open(f"C:/Dev/school/Watchapp/Tests/screens_tests/{logo_theme}.png")
-        logoimage = logoimage.resize((LOGO_WIDTH, LOGO_HEIGHT))
-        photoimage = ImageTk.PhotoImage(logoimage)
-        self.logo = Ctk.CTkLabel(self, text="", image=photoimage)
-        self.logo.photo = photoimage
-        self.logo.grid(row=1, column=0, pady=10)
-
+        except:
+            pass
+        self.after(1000, self.update_connection_status)
 
 def main():
-    root = GUI(dark_theme=True)
+    root = GUI()
     root.mainloop()
 
 if __name__ == "__main__":

@@ -5,8 +5,8 @@ from PIL import Image, ImageTk
 from sign_in_screens import SignUpFrame, LoginFrame
 
 class GUI(Ctk.CTk):
-    def __init__(self, dark_theme=True, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, dark_theme=True):
+        super().__init__()
         Ctk.set_appearance_mode("Dark") if dark_theme else Ctk.set_appearance_mode("Light")
         self.geometry(f"{SCREEN_WIDTH}x{SCREEN_HEIGHT}")
         self.resizable(False, False)
@@ -50,7 +50,7 @@ class LogoFrame(Ctk.CTkFrame):
         self.after(1000, self.update_connection_status)
 
 def main():
-    root = GUI(dark_theme=True)
+    root = GUI()
     root.mainloop()
 
 if __name__ == "__main__":
