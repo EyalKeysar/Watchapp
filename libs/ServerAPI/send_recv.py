@@ -9,5 +9,6 @@ def send_request(request, *args):
     client_socket.connect(("localhost", 2230))
     client_socket.sendall(request.encode())
     response = client_socket.recv(1024).decode()
+    print("Response: ", response)
     client_socket.close()
     return response

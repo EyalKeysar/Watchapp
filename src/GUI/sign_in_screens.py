@@ -128,7 +128,16 @@ class SignUpFrame(Ctk.CTkFrame):
             print(f"Username: {self.username.get()}")
             print(f"Password: {self.password.get()}")
             print(f"Email: {self.email.get()}")
-            print(self.server_api.signup(self.email.get(), self.password.get(), self.username.get()))
+            
+            status = (self.server_api.signup(self.email.get(), self.password.get(), self.username.get()))
+            if status == "False":
+                print("Sign up failed")
+                self.email_already_exists = Ctk.CTkLabel(self, text=" * Email already exists", font=(GENERAL_FONT, 20), text_color="red")
+                self.email_already_exists.grid(row=8, column=0, columnspan=MID_COL_SPAN_SIGNUP, pady=SIGN_UP_ERROR_PADY)
+            else:
+                raise NotImplementedError, "should add after sign in gui"
+                pass
+
 
     def already_have_account(self):
         print("Already have an account?")
