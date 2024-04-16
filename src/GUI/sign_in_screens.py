@@ -3,10 +3,14 @@ import customtkinter as Ctk
 from .consts import *
 from PIL import Image, ImageTk
 
+from .dashboard import DashboardFrame, CardFrame
+
 class LoginFrame(Ctk.CTkFrame):
-    def __init__(self, server_api, *args, **kwargs):
+    def __init__(self, parent, server_api, *args, **kwargs):
+        self.parent = parent
         self.server_api = server_api
-        super().__init__(*args, **kwargs)
+        
+        super().__init__(parent, *args, **kwargs)
         self.grid(sticky=STICKY_LAYOUT)    
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
@@ -48,7 +52,22 @@ class LoginFrame(Ctk.CTkFrame):
     def login(self):
         print(f"Email: {self.email.get()}")
         print(f"Password: {self.password.get()}")
-        self.server_api.login(self.email.get(), self.password.get())
+        if self.server_api.login(self.email.get(), self.password.get()) == "False":
+            print("Login failed")
+            self.invalid_credentials = Ctk.CTkLabel(self, text=" * Invalid credentials", font=(GENERAL_FONT, 20), text_color="red")
+            self.invalid_credentials.grid(row=6, column=0, pady=LOGIN_ERROR_PADY)
+        else:
+            print("Login successful")
+            # Load Dashboard frame
+            self.grid_forget()
+            self.server_api.get_children()
+            self.parent.children_cards = []
+            for i in range(len(self.server_api.children)):
+                self.parent.children_cards.append(CardFrame(self.parent, self.server_api, self.server_api.children[i], fg_color=BG_COLOR))
+                self.parent.children_cards[i].grid(row=i+1, column=0, pady=LOGIN_Y_PADDING, padx=LOGIN_X_PADDING)
+
+
+        
     
     def forgot_password(self):
         print("Forgot password?")
@@ -57,14 +76,15 @@ class LoginFrame(Ctk.CTkFrame):
         print("Doesn't have an account?")
         # Load Sign Up frame
         self.grid_forget()
-        self.master.frame = SignUpFrame(self.server_api, self.master, fg_color=BG_COLOR)
-        self.master.frame.grid(row=1, column=0, pady=DIST_FROM_LOGO, sticky=STICKY_LAYOUT)
+        self.parent.frame = SignUpFrame(self.parent, self.server_api, fg_color=BG_COLOR)
+        self.parent.frame.grid(row=1, column=0, pady=DIST_FROM_LOGO, sticky=STICKY_LAYOUT)
         
 class SignUpFrame(Ctk.CTkFrame):
     
-    def __init__(self, server_api, *args, **kwargs):
+    def __init__(self, parent, server_api, *args, **kwargs):
+        self.parent = parent
         self.server_api = server_api
-        super().__init__(*args, **kwargs)
+        super().__init__(parent, *args, **kwargs)
         self.grid(sticky=STICKY_LAYOUT)    
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
@@ -135,13 +155,15 @@ class SignUpFrame(Ctk.CTkFrame):
                 self.email_already_exists = Ctk.CTkLabel(self, text=" * Email already exists", font=(GENERAL_FONT, 20), text_color="red")
                 self.email_already_exists.grid(row=8, column=0, columnspan=MID_COL_SPAN_SIGNUP, pady=SIGN_UP_ERROR_PADY)
             else:
-                raise NotImplementedError, "should add after sign in gui"
+                raise NotImplementedError # "should add after sign in gui"
                 pass
+
+# R U R' U' R' F R2 U' R' U' R U R' F'
 
 
     def already_have_account(self):
         print("Already have an account?")
         # Load Login frame
         self.grid_forget()
-        self.master.frame = LoginFrame(self.server_api, self.master, fg_color=BG_COLOR)
-        self.master.frame.grid(row=1, column=0, pady=DIST_FROM_LOGO, sticky=STICKY_LAYOUT)
+        self.parent.frame = LoginFrame(self.parent, self.server_api, fg_color=BG_COLOR)
+        self.parent.frame.grid(row=1, column=0, pady=DIST_FROM_LOGO, sticky=STICKY_LAYOUT)

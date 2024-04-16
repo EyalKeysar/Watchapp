@@ -25,6 +25,9 @@ class ServerAPI:
         '''
             This method is used to login to the server.
         '''
+        # !!!!!!!!!!
+        return "True"
+        # !!!!!!!!!!
         return send_request(self.build_request("auth", "login", email, password))
     
     def signup(self, email, password, username):
@@ -32,6 +35,18 @@ class ServerAPI:
             This method is used to signup to the server.
         '''
         return send_request(self.build_request("auth", "signup", email, password, username))
+    
+    def get_children(self):
+        '''
+            This method is used to get the children from the server.
+        '''
+        # !!!!!!!!!!
+        self.children =  [["yosi"], ["moshe"]]
+        return "True"
+        # !!!!!!!!!!
+
+        return send_request(self.build_request("fetch", "children"))
+    
     
     
 if __name__ == '__main__':

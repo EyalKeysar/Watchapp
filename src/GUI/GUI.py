@@ -1,31 +1,34 @@
 import tkinter as tk
 import customtkinter as Ctk
+from customtkinter import CTkTabview
 from .consts import *
 from PIL import Image, ImageTk
 from .sign_in_screens import SignUpFrame, LoginFrame
+from .dashboard import DashboardFrame
 
 class GUI(Ctk.CTk):
     def __init__(self, server_api, dark_theme=True):
         self.server_api = server_api
         super().__init__()
-        Ctk.set_appearance_mode("Dark") if dark_theme else Ctk.set_appearance_mode("Light")
+        # Ctk.set_appearance_mode("Dark") if dark_theme else Ctk.set_appearance_mode("Light")
         self.geometry(f"{SCREEN_WIDTH}x{SCREEN_HEIGHT}")
         self.resizable(False, False)
         self.columnconfigure(0, weight=1)
-        self.title(self.server_api.get_info())
+        self.title("Watchapp")
         
         # bg = tk.PhotoImage(file="C:/Networks/Watchapp/tests/screens_tests/dark_bg.jpg")
         #make it bg
         
         self.logo = LogoFrame(self, fg_color=BG_COLOR)
         self.logo.grid(row=0, column=0, sticky="ew")
-        self.frame = SignUpFrame(self.server_api, self, fg_color=BG_COLOR)
+        self.frame = SignUpFrame(self, self.server_api, fg_color=BG_COLOR)
         self.frame.grid(row=1, column=0, pady=DIST_FROM_LOGO, sticky=STICKY_LAYOUT)
-
+        # self.dashboard = DashboardFrame(self, self.server_api, fg_color="#353400")
+        # self.dashboard.grid(row=1, column=0, pady=DIST_FROM_LOGO, sticky=STICKY_LAYOUT)
 
 class LogoFrame(Ctk.CTkFrame):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
         
         self.grid_columnconfigure(0, weight=1)
 

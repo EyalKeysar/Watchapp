@@ -3,6 +3,8 @@ import customtkinter as Ctk
 from consts import *
 from PIL import Image, ImageTk
 
+from .dashboard import DashboardFrame
+
 class LoginFrame(Ctk.CTkFrame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
