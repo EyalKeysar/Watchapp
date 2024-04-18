@@ -14,9 +14,9 @@ class DashboardFrame(Ctk.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
         
-        self.title = Ctk.CTkLabel(self, text="Dashboard", font=(GENERAL_FONT, TITLE_FONT_SIZE))
+        self.title = Ctk.CTkLabel(self.parent, text="Dashboard", font=(GENERAL_FONT, TITLE_FONT_SIZE))
         self.title.grid(
-            row=0, column=0, 
+            row=1, column=0, 
             pady=LOGIN_Y_PADDING, 
             padx=LOGIN_X_PADDING)
         
@@ -27,8 +27,7 @@ class DashboardFrame(Ctk.CTkFrame):
         self.cards = []
         for i in range(len(self.server_api.children)):
             self.cards.append(CardFrame(self.parent, self.server_api, self.server_api.children[i]))
-            self.cards[i].grid(row=2, column=0, pady=LOGIN_Y_PADDING, padx=LOGIN_X_PADDING)
-            pass
+            self.cards[i].grid(row=2, column=i, pady=LOGIN_Y_PADDING, padx=LOGIN_X_PADDING)
 
 
 
