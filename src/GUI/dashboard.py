@@ -14,7 +14,7 @@ class DashboardFrame(Ctk.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
         
-        self.title = Ctk.CTkLabel(self.parent, text="Dashboard", font=(GENERAL_FONT, TITLE_FONT_SIZE))
+        self.title = Ctk.CTkLabel(self, text="Dashboard", font=(GENERAL_FONT, TITLE_FONT_SIZE))
         self.title.grid(
             row=1, column=0, 
             pady=LOGIN_Y_PADDING, 

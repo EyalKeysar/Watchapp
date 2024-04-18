@@ -61,6 +61,7 @@ class LoginFrame(Ctk.CTkFrame):
             # Load Dashboard frame
             self.grid_forget()
             self.parent.frame = DashboardFrame(self.parent, self.server_api, fg_color=BG_COLOR)
+            self.parent.frame.grid(row=1, column=0, columnspan=100)
 
 
 

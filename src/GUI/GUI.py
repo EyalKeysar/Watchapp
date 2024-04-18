@@ -22,7 +22,7 @@ class GUI(Ctk.CTk):
         self.logo = LogoFrame(self, fg_color=BG_COLOR)
         self.logo.grid(row=0, column=0, sticky="ew", columnspan=100) # Just a lot of columnspan to make sure it's centered and full width
         self.frame = SignUpFrame(self, self.server_api, fg_color=BG_COLOR)
-        self.frame.grid(row=1, column=0, pady=DIST_FROM_LOGO, sticky=STICKY_LAYOUT)
+        self.frame.grid(row=1, column=0, pady=DIST_FROM_LOGO, sticky=STICKY_LAYOUT, columnspan=100) # Just a lot of columnspan to make sure it's centered and full width
 
 class LogoFrame(Ctk.CTkFrame):
     def __init__(self, parent, *args, **kwargs):
