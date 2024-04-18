@@ -60,11 +60,8 @@ class LoginFrame(Ctk.CTkFrame):
             print("Login successful")
             # Load Dashboard frame
             self.grid_forget()
-            self.server_api.get_children()
-            self.parent.children_cards = []
-            for i in range(len(self.server_api.children)):
-                self.parent.children_cards.append(CardFrame(self.parent, self.server_api, self.server_api.children[i], fg_color=BG_COLOR))
-                self.parent.children_cards[i].grid(row=i+1, column=0, pady=LOGIN_Y_PADDING, padx=LOGIN_X_PADDING)
+            self.parent.frame = DashboardFrame(self.parent, self.server_api, fg_color=BG_COLOR)
+
 
 
         

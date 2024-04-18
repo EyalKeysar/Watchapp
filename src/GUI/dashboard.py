@@ -22,26 +22,15 @@ class DashboardFrame(Ctk.CTkFrame):
         
         # ! Get cards (fetch children data) from server
 
-        cards = [["yosi", 10]]
+        self.server_api.get_children()
 
-        # self.add_card_btn = Ctk.CTkButton(self, text="+", command=self.add_card, width=LOGIN_BTN_WIDTH, height=LOGIN_BTN_HEIGHT, font=LOGIN_BTN_FONT)
-        # self.add_card_btn.grid(row=1, column=0, pady=LOGIN_Y_PADDING, padx=LOGIN_X_PADDING)
-        self.c1 = CardFrame(self, self.server_api, fg_color=BG_COLOR)
-        self.c2 = CardFrame(self, self.server_api, fg_color=BG_COLOR)
-        
-        self.parent.c1 = self.c1
-        self.parent.c1.grid(row=1, column=0, pady=LOGIN_Y_PADDING, padx=LOGIN_X_PADDING)
-        self.parent.c2 = self.c2
-        self.parent.c2.grid(row=2, column=0, pady=LOGIN_Y_PADDING, padx=LOGIN_X_PADDING)
-        # super().c2 = self.c2
-        # super().c1.grid(row=1, column=0, pady=LOGIN_Y_PADDING, padx=LOGIN_X_PADDING)
-        # super().c2.grid(row=2, column=0, pady=LOGIN_Y_PADDING, padx=LOGIN_X_PADDING)
+        self.cards = []
+        for i in range(len(self.server_api.children)):
+            self.cards.append(CardFrame(self.parent, self.server_api, self.server_api.children[i]))
+            self.cards[i].grid(row=2, column=0, pady=LOGIN_Y_PADDING, padx=LOGIN_X_PADDING)
+            pass
 
 
-    def add_card(self):
-        self.grid_forget()
-        self.master.frame = CardFrame(self.server_api, self.master, fg_color=BG_COLOR)
-        
 
 class CardFrame(Ctk.CTkFrame):
     def __init__(self, parent, server_api, child_data, *args, **kwargs):

@@ -23,8 +23,6 @@ class GUI(Ctk.CTk):
         self.logo.grid(row=0, column=0, sticky="ew")
         self.frame = SignUpFrame(self, self.server_api, fg_color=BG_COLOR)
         self.frame.grid(row=1, column=0, pady=DIST_FROM_LOGO, sticky=STICKY_LAYOUT)
-        # self.dashboard = DashboardFrame(self, self.server_api, fg_color="#353400")
-        # self.dashboard.grid(row=1, column=0, pady=DIST_FROM_LOGO, sticky=STICKY_LAYOUT)
 
 class LogoFrame(Ctk.CTkFrame):
     def __init__(self, parent, *args, **kwargs):
