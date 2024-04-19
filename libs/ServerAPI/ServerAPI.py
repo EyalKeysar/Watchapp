@@ -41,7 +41,7 @@ class ServerAPI:
             This method is used to get the children from the server.
         '''
         # !!!!!!!!!!
-        self.children =  [["yosi"], ["moshe"], ["moshe1"], ["moshe2"]]
+        self.children =  [["yosi"], ["david"], ["moshe"], ["shlomo"], ["yakov"], ["yehuda"], ["yitzhak"], ["yosef"], ["yehoshua"], ["yehonatan"]]
         return "True"
         # !!!!!!!!!!
 
