@@ -16,6 +16,12 @@ class DashboardFrame(Ctk.CTkFrame):
         self.title = Ctk.CTkLabel(self, text="Dashboard", font=(GENERAL_FONT, TITLE_FONT_SIZE))
         self.title.grid(row=0, column=0, pady=10, padx=10)
 
+        self.add_child_button = Ctk.CTkButton(self.parent, text="+", command=self.add_child, width=50, height=50, font=(GENERAL_FONT, 20))
+        self.add_child_button.grid(row=1, column=1, pady=10, padx=10)
+
+        self.logout_button = Ctk.CTkButton(self.parent, text="➜", command=self.logout, width=70, height=50, font=(GENERAL_FONT, 25))
+        self.logout_button.grid(row=1, column=2, pady=10, padx=40)
+
         self.server_api.get_children()
 
         self.cards = []
@@ -34,6 +40,11 @@ class DashboardFrame(Ctk.CTkFrame):
             card.place(x=x_pos, y=y_pos)
             self.cards.append(card)
 
+    def add_child(self):
+        pass
+
+    def logout(self):
+        pass
 
 
 
@@ -90,37 +101,3 @@ class CardFrame(Ctk.CTkFrame):
         except:
             pass
         self.after(1000, self.update_active_status)
-
-
-        
-
-class AddChildFrame(Ctk.CTkFrame):
-    def __init__(self, server_api, *args, **kwargs):
-        self.server_api = server_api
-        super().__init__(*args, **kwargs)
-        self.grid(sticky=STICKY_LAYOUT)    
-        self.grid_columnconfigure(0, weight=1)
-        self.grid_rowconfigure(0, weight=1)
-        
-        self.title = Ctk.CTkLabel(self, text="Add Child", font=(GENERAL_FONT, 30))
-        self.title.grid(
-            row=0, column=0, 
-            pady=LOGIN_Y_PADDING, 
-            padx=LOGIN_X_PADDING)
-        
-        self.name = Ctk.CTkEntry(self, placeholder_text="Name", width=ENTRY_WIDTH, height=ENTRY_HEIGHT, font=ENTRY_FONT)
-        self.name.grid(
-            row=1, column=0, 
-            pady=LOGIN_Y_PADDING,
-            padx=LOGIN_X_PADDING)
-        
-        self.age = Ctk.CTkEntry(self, placeholder_text="Age", width=ENTRY_WIDTH, height=ENTRY_HEIGHT, font=ENTRY_FONT)
-        self.age.grid(
-            row=2, column=0, 
-            pady=LOGIN_Y_PADDING,
-            padx=LOGIN_X_PADDING)
-        
-        self.add_child = Ctk.CTkButton(self, text="Add Child", command=self.add_child, width=LOGIN_BTN_WIDTH, height=LOGIN_BTN_HEIGHT, font=LOGIN_BTN_FONT)
-        self.add_child.grid(row=3, column=0, 
-                        pady=LOGIN_Y_PADDING,
-                        padx=LOGIN_X_PADDING)
