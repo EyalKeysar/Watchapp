@@ -1,5 +1,5 @@
 SCREEN_WIDTH = 1200
-SCREEN_HEIGHT = 800
+SCREEN_HEIGHT = 820
 
 STICKY_LAYOUT = ""
 TITLE_FONT_SIZE = 70
@@ -41,3 +41,7 @@ CONNECTED_TEXT = "Connected"
 CONNECTED_COLOR = "green"
 DISCONNECTED_TEXT = "Disconnected"
 DISCONNECTED_COLOR = "red"
+
+
+CARD_WIDTH = 250  # Adjust according to your card size
+CARD_HEIGHT = 150  # Adjust according to your card size
