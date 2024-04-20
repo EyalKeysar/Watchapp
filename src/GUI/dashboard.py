@@ -41,14 +41,14 @@ class DashboardFrame(Ctk.CTkFrame):
             self.cards.append(card)
 
     def add_child(self):
-        pass
+        self.grid_forget()
+        for card in self.cards:
+            card.place_forget()
+        self.add_child_frame = AddChildFrame(self.parent, self.server_api)
+        self.add_child_frame.place(x=SCREEN_WIDTH // 2 - 200, y=SCREEN_HEIGHT // 2 - 100)
 
     def logout(self):
         pass
-
-
-
-
 
 class CardFrame(Ctk.CTkFrame):
     def __init__(self, parent, server_api, child_data, *args, **kwargs):
@@ -101,3 +101,38 @@ class CardFrame(Ctk.CTkFrame):
         except:
             pass
         self.after(1000, self.update_active_status)
+
+
+class AddChildFrame(Ctk.CTkFrame):
+    def __init__(self, parent, server_api, *args, **kwargs):
+        self.parent = parent
+        self.server_api = server_api
+        
+        super().__init__(parent, *args, **kwargs)
+        # self.grid(sticky=STICKY_LAYOUT)    
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+        
+        self.title = Ctk.CTkLabel(self, text="Add Child", font=(GENERAL_FONT, TITLE_FONT_SIZE))
+        self.title.grid(
+            row=0, column=0, 
+            pady=LOGIN_Y_PADDING, 
+            padx=LOGIN_X_PADDING)
+
+        self.child_id = Ctk.CTkEntry(self, placeholder_text="Child ID", width=300, height=30, font=(GENERAL_FONT, 25))
+        self.child_id.grid(
+            row=1, column=0, 
+            pady=LOGIN_Y_PADDING,
+            padx=LOGIN_X_PADDING)
+        
+        self.add_child_btn = Ctk.CTkButton(self, text="Add Child", command=self.add_child, width=LOGIN_BTN_WIDTH, height=LOGIN_BTN_HEIGHT, font=LOGIN_BTN_FONT)
+        self.add_child_btn.grid(row=5, column=0, 
+                        pady=LOGIN_Y_PADDING,
+                        padx=LOGIN_X_PADDING)
+        
+    def add_child(self):
+        print(f"Child ID: {self.child_id.get()}")
+        # self.server_api.add_child(self.child_id.get())
+        # self.grid_forget()
+        # self.parent.frame = DashboardFrame(self.parent, self.server_api, fg_color=BG_COLOR)
+        # self.parent.frame.grid(row=1, column=0, columnspan=100)
