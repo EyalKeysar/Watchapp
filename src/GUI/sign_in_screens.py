@@ -5,6 +5,22 @@ from PIL import Image, ImageTk
 
 from .dashboard import DashboardFrame, CardFrame
 
+title_r, title_c = 0, 0
+
+username_r, username_c = 1, 0
+email_r, email_c = 2, 0
+password_r, password_c = 3, 0
+conf_password_r, conf_password_c = 4, 0
+
+not_matching_passwords_r, not_matching_passwords_c = 5, 0
+email_already_exists_r, email_already_exists_c = 6, 0
+invalid_username_r, invalid_username_c = 7, 0
+invalid_password_r, invalid_password_c = 8, 0
+
+already_have_account_r, already_have_account_c = 9, 0
+sign_up_r, sign_up_c = 10, 0
+
+
 class LoginFrame(Ctk.CTkFrame):
     def __init__(self, parent, server_api, *args, **kwargs):
         self.parent = parent
@@ -89,13 +105,6 @@ class SignUpFrame(Ctk.CTkFrame):
 
         self.passwords_match = False
         
-        title_r, title_c = 0, 0
-        username_r, username_c = 1, 0
-        email_r, email_c = 2, 0
-        password_r, password_c = 3, 0
-        conf_password_r, conf_password_c = 4, 0
-        already_have_account_r, already_have_account_c = 8, 0
-        sign_up_r, sign_up_c = 9, 0 
         
         
         self.title = Ctk.CTkLabel(self, text="Sign Up", font=(GENERAL_FONT, TITLE_FONT_SIZE))
@@ -124,20 +133,22 @@ class SignUpFrame(Ctk.CTkFrame):
         self.sign_up.grid(row=sign_up_r, column=sign_up_c, columnspan=MID_COL_SPAN_SIGNUP, padx=SIGNUP_X_PADDING, pady=SIGNUP_Y_PADDING)
 
     def sign_up(self):
+
+
         if self.password.get() == self.confirm_password.get():
             self.passwords_match = True; self.not_matching_passwords.grid_forget()
         else:
-            self.passwords_match = False; self.not_matching_passwords.grid(row=5, column=0, columnspan=MID_COL_SPAN_SIGNUP, pady=SIGN_UP_ERROR_PADY)
+            self.passwords_match = False; self.not_matching_passwords.grid(row=not_matching_passwords_r, column=not_matching_passwords_c, columnspan=MID_COL_SPAN_SIGNUP, pady=SIGN_UP_ERROR_PADY)
             return
         
         if len(self.username.get()) < 4: 
-            self.invalid_username.grid(row=6, column=0, columnspan=MID_COL_SPAN_SIGNUP, pady=SIGN_UP_ERROR_PADY)
+            self.invalid_username.grid(row=invalid_username_r, column=invalid_username_c, columnspan=MID_COL_SPAN_SIGNUP, pady=SIGN_UP_ERROR_PADY)
             return
         else: 
             self.invalid_username.grid_forget()
             
         if len(self.password.get()) < 4:
-            self.invalid_password.grid(row=7, column=0, columnspan=MID_COL_SPAN_SIGNUP, pady=SIGN_UP_ERROR_PADY)
+            self.invalid_password.grid(row=invalid_password_r, column=invalid_password_c, columnspan=MID_COL_SPAN_SIGNUP, pady=SIGN_UP_ERROR_PADY)
             return
         else:
             self.invalid_password.grid_forget()
@@ -151,12 +162,12 @@ class SignUpFrame(Ctk.CTkFrame):
             if status == "False":
                 print("Sign up failed")
                 self.email_already_exists = Ctk.CTkLabel(self, text=" * Email already exists", font=(GENERAL_FONT, 20), text_color="red")
-                self.email_already_exists.grid(row=8, column=0, columnspan=MID_COL_SPAN_SIGNUP, pady=SIGN_UP_ERROR_PADY)
+                self.email_already_exists.grid(row=email_already_exists_r, column=email_already_exists_c, columnspan=MID_COL_SPAN_SIGNUP, pady=SIGN_UP_ERROR_PADY)
             else:
-                raise NotImplementedError # "should add after sign in gui"
-                pass
-
-# R U R' U' R' F R2 U' R' U' R U R' F'
+            # Load Dashboard frame
+                self.grid_forget()
+                self.parent.frame = DashboardFrame(self.parent, self.server_api, fg_color=BG_COLOR)
+                self.parent.frame.grid(row=1, column=0, columnspan=100)
 
 
     def already_have_account(self):

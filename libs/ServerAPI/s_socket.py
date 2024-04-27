@@ -61,7 +61,6 @@ class TLSProtocol:
 
         diffie_hellman = DiffieHellman(prime, base)  # Example prime and base values
         self.client_public_key = diffie_hellman.public_key
-        print(f"public key: {self.client_public_key}\nprivate key: {diffie_hellman.private_key}\nprime: {prime}\nbase: {base}\n\n")
 
         # Send ClientHello with client's public key
         client_hello = f"ClientHello:{self.client_public_key}"
@@ -70,7 +69,6 @@ class TLSProtocol:
         # Receive ServerHello with server's public key
         server_hello = self.socket.recv(1024)
         self.server_public_key = int(server_hello.split(b":")[1])
-        print("received server hello public key: ", self.server_public_key)
 
         # Compute shared secret using Diffie-Hellman
         diffie_hellman.compute_shared_secret(self.server_public_key)
