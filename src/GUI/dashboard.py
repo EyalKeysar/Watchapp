@@ -119,9 +119,14 @@ class AddChildFrame(Ctk.CTkFrame):
             pady=LOGIN_Y_PADDING, 
             padx=LOGIN_X_PADDING)
 
-        self.child_id = Ctk.CTkEntry(self, placeholder_text="Child ID", width=300, height=30, font=(GENERAL_FONT, 25))
-        self.child_id.grid(
+        self.auth_str = Ctk.CTkEntry(self, placeholder_text="Auth code", width=300, height=30, font=(GENERAL_FONT, 25))
+        self.auth_str.grid(
             row=1, column=0, 
+            pady=LOGIN_Y_PADDING,
+            padx=LOGIN_X_PADDING)
+        self.child_name = Ctk.CTkEntry(self, placeholder_text="Child Name", width=300, height=30, font=(GENERAL_FONT, 25))
+        self.child_name.grid(
+            row=2, column=0, 
             pady=LOGIN_Y_PADDING,
             padx=LOGIN_X_PADDING)
         
@@ -131,7 +136,10 @@ class AddChildFrame(Ctk.CTkFrame):
                         padx=LOGIN_X_PADDING)
         
     def add_child(self):
-        print(f"Child ID: {self.child_id.get()}")
+        print(f"Auth code: {self.auth_str.get()}")
+
+        respond = self.server_api.confirm_agent(self.auth_str.get(), self.child_name.get())
+        print("rr respond",respond)
         # self.server_api.add_child(self.child_id.get())
         # self.grid_forget()
         # self.parent.frame = DashboardFrame(self.parent, self.server_api, fg_color=BG_COLOR)
