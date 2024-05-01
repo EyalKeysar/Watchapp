@@ -5,10 +5,12 @@ from .consts import *
 from PIL import Image, ImageTk
 from .sign_in_screens import SignUpFrame, LoginFrame
 from .dashboard import DashboardFrame
+import threading
 
 class GUI(Ctk.CTk):
     def __init__(self, server_api, dark_theme=True):
         self.server_api = server_api
+        threading.Thread(target=self.server_api.connect).start()
         super().__init__()
         # Ctk.set_appearance_mode("Dark") if dark_theme else Ctk.set_appearance_mode("Light")
         self.geometry(f"{SCREEN_WIDTH}x{SCREEN_HEIGHT}")
