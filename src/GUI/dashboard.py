@@ -1,9 +1,13 @@
 import tkinter as tk
+from tkinter import ttk
+from tkinter_webcam import webcam
 from typing import Tuple
+
 import customtkinter as Ctk
 from .consts import *
 from PIL import Image, ImageTk
 import math
+from .Customlistbox import CustomScrolledListbox
 
 class DashboardFrame(Ctk.CTkFrame):
     def __init__(self, parent, server_api, *args, **kwargs):
@@ -53,12 +57,13 @@ class DashboardFrame(Ctk.CTkFrame):
 class CardFrame(Ctk.CTkFrame):
     def __init__(self, parent, server_api, child_data, *args, **kwargs):
         self.server_api = server_api
+        self.parent = parent
         super().__init__(parent, *args, **kwargs)
         self.grid(sticky=STICKY_LAYOUT)    
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
-        self.default_fg_color = "dark gray"
+        self.default_fg_color = "brown"
         
         self.title = Ctk.CTkLabel(self, text=child_data[0], font=(GENERAL_FONT, 30))
         self.title.grid(row=0, column=0, pady=10, padx=50, columnspan=3)
@@ -88,6 +93,13 @@ class CardFrame(Ctk.CTkFrame):
 
     def view_child(self):
         print(f"Viewing child {self.title.cget('text')}")
+        for card in self.parent.frame.cards:
+            card.place_forget()
+        self.parent.frame.grid_forget()
+        self.parent.frame.add_child_button.grid_forget()
+        self.parent.frame = ChildView(self.parent, self.server_api)
+        self.parent.frame.grid(row=1, column=0, columnspan=100)
+
 
     def update_active_status(self):
         try:
@@ -135,12 +147,118 @@ class AddChildFrame(Ctk.CTkFrame):
                         pady=LOGIN_Y_PADDING,
                         padx=LOGIN_X_PADDING)
         
+        self.go_back_btn = Ctk.CTkButton(self, text="Go Back", command=self.go_back, width=LOGIN_BTN_WIDTH, height=LOGIN_BTN_HEIGHT, font=LOGIN_BTN_FONT)
+        self.go_back_btn.grid(row=6, column=0, 
+                        pady=LOGIN_Y_PADDING,
+                        padx=LOGIN_X_PADDING)
+
     def add_child(self):
         print(f"Auth code: {self.auth_str.get()}")
 
         respond = self.server_api.confirm_agent(self.auth_str.get(), self.child_name.get())
         print("rr respond",respond)
         # self.server_api.add_child(self.child_id.get())
-        # self.grid_forget()
-        # self.parent.frame = DashboardFrame(self.parent, self.server_api, fg_color=BG_COLOR)
+        self.go_back()
+
+
+    def go_back(self):
+        self.grid_forget()
+        self.place_forget()
+
+        self.parent.frame = DashboardFrame(self.parent, self.server_api, fg_color=BG_COLOR)
+        self.parent.frame.grid(row=1, column=0, columnspan=100)
+
+
+
+class ChildView(Ctk.CTkFrame):
+    def __init__(self, parent, server_api, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.parent = parent
+        self.server_api = server_api
+        self.grid(sticky=tk.NSEW)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+
+        self.title = Ctk.CTkLabel(self, text="Child View", font=(GENERAL_FONT, TITLE_FONT_SIZE))
+        self.title.grid(row=0, column=0, pady=10, padx=10, columnspan=10)
+
+
+        COLUMNS = ("id", "child_id", "start_time", "end_time", "allowed_time", "time_span", "usage")
+
+        # Creating Treeview widget
+        self.restrictions = ttk.Treeview(self, columns=COLUMNS, show="headings")
+        self.restrictions.grid(row=1, column=0, pady=10, padx=10, columnspan=10, sticky=tk.NSEW)
+
+        # Configuring style for Treeview
+
+        style = ttk.Style(self)
+        style.theme_use('default')  # Ensure default theme is used
+        style.configure('Dark.Treeview', background='#363636', foreground='white', fieldbackground='#363636', font=(GENERAL_FONT, 10))
+        style.configure('Dark.Treeview.Heading', background='#363636', foreground='white', font=(GENERAL_FONT, 10))
+        style.map('Treeview', background=[('selected', '#0074D9')], foreground=[('selected', 'white')])
+        style.map('Treeview.Heading', background=[('active', '#363636')])
+        self.restrictions.configure(style='Dark.Treeview')
+
+        # Define headings for columns
+        self.restrictions.heading("id", text="ID")
+        self.restrictions.heading("child_id", text="Child ID")
+        self.restrictions.heading("start_time", text="Start Time")
+        self.restrictions.heading("end_time", text="End Time")
+        self.restrictions.heading("allowed_time", text="Allowed Time")
+        self.restrictions.heading("time_span", text="Time Span")
+        self.restrictions.heading("usage", text="Usage")
+
+        self.restrictions.column("id", width=20)
+        self.restrictions.column("child_id", width=50)
+        self.restrictions.column("start_time", width=150)
+        self.restrictions.column("end_time", width=150)
+        self.restrictions.column("allowed_time", width=100)
+        self.restrictions.column("time_span", width=100)
+        self.restrictions.column("usage", width=200)
+
+
+        # Inserting sample data
+        sample_data = [
+            (1, 101, "2024-05-01 10:00", "2024-05-01 14:00", 240, "4 hours", "Some usage"),
+            (2, 102, "2024-05-01 15:00", "2024-05-01 18:00", 180, "3 hours", "Another usage"),
+            (1, 101, "2024-05-01 10:00", "2024-05-01 14:00", 240, "4 hours", "Some usage"),
+            (2, 102, "2024-05-01 15:00", "2024-05-01 18:00", 180, "3 hours", "Another usage"),
+            (1, 101, "2024-05-01 10:00", "2024-05-01 14:00", 240, "4 hours", "Some usage"),
+            (2, 102, "2024-05-01 15:00", "2024-05-01 18:00", 180, "3 hours", "Another usage"),
+            (1, 101, "2024-05-01 10:00", "2024-05-01 14:00", 240, "4 hours", "Some usage"),
+            (2, 102, "2024-05-01 15:00", "2024-05-01 18:00", 180, "3 hours", "Another usage"),
+            (1, 101, "2024-05-01 10:00", "2024-05-01 14:00", 240, "4 hours", "Some usage"),
+            # Add more sample data here if needed
+        ]
+
+        for data in sample_data:
+            self.restrictions.insert("", "end", values=data)
+
+
+        self.add_restriction_button = Ctk.CTkButton(self, text="Add Restriction", command=self.add_restriction, width=200, height=30, font=(GENERAL_FONT, 20))
+        self.modify_restriction_button = Ctk.CTkButton(self, text="Modify Restriction", command=self.modify_restriction, width=200, height=30, font=(GENERAL_FONT, 20))
+        self.delete_restriction_button = Ctk.CTkButton(self, text="Delete Restriction", command=self.delete_restriction, width=200, height=30, font=(GENERAL_FONT, 20))
+
+        self.add_restriction_button.grid(row=2, column=0, pady=10, padx=10)
+        self.modify_restriction_button.grid(row=3, column=0, pady=10, padx=10)
+        self.delete_restriction_button.grid(row=4, column=0, pady=10, padx=10)
+
+
+
+
+
+
+    def add_restriction(self):
+        pass
+        # self.parent.frame = AddRestrictionFrame(self.parent, self.server_api)
+        # self.parent.frame.grid(row=1, column=0, columnspan=100)
+
+    def modify_restriction(self):
+        pass
+        # self.parent.frame = ModifyRestrictionFrame(self.parent, self.server_api)
+        # self.parent.frame.grid(row=1, column=0, columnspan=100)
+
+    def delete_restriction(self):
+        pass
+        # self.parent.frame = DeleteRestrictionFrame(self.parent, self.server_api)
         # self.parent.frame.grid(row=1, column=0, columnspan=100)
