@@ -44,6 +44,8 @@ class DashboardFrame(Ctk.CTkFrame):
             card.place(x=x_pos, y=y_pos)
             self.cards.append(card)
 
+
+
     def add_child(self):
         self.grid_forget()
         for card in self.cards:
@@ -65,7 +67,10 @@ class CardFrame(Ctk.CTkFrame):
 
         self.default_fg_color = "brown"
         
-        self.title = Ctk.CTkLabel(self, text=child_data[0], font=(GENERAL_FONT, 30))
+        print("child_data",child_data)
+        print("child data type",type(child_data))
+
+        self.title = Ctk.CTkLabel(self, text=child_data.child_name, font=(GENERAL_FONT, 30))
         self.title.grid(row=0, column=0, pady=10, padx=50, columnspan=3)
 
         self.active_status = Ctk.CTkLabel(self, text="Inactive", font=(GENERAL_FONT, 15),text_color="red")

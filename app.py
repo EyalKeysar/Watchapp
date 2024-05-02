@@ -6,7 +6,7 @@ import threading
 
 
 def main():
-    serverAPI = MockServerAPI()
+    serverAPI = ServerAPI()
     root = GUI(serverAPI)
     root.mainloop()
     # time.sleep(5)
