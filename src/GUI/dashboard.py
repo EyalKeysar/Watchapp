@@ -195,7 +195,7 @@ class ChildView(Ctk.CTkFrame):
         style.theme_use('default')  # Ensure default theme is used
         style.configure('Dark.Treeview', background='#363636', foreground='white', fieldbackground='#363636', font=(GENERAL_FONT, 10))
         style.configure('Dark.Treeview.Heading', background='#363636', foreground='white', font=(GENERAL_FONT, 10))
-        style.map('Treeview', background=[('selected', '#0074D9')], foreground=[('selected', 'white')])
+        style.map('Treeview', background=[('selected', '#3e465c')], foreground=[('selected', 'white')])
         style.map('Treeview.Heading', background=[('active', '#363636')])
         self.restrictions.configure(style='Dark.Treeview')
 
@@ -218,34 +218,27 @@ class ChildView(Ctk.CTkFrame):
 
 
         # Inserting sample data
-        sample_data = [
-            (1, 101, "2024-05-01 10:00", "2024-05-01 14:00", 240, "4 hours", "Some usage"),
-            (2, 102, "2024-05-01 15:00", "2024-05-01 18:00", 180, "3 hours", "Another usage"),
-            (1, 101, "2024-05-01 10:00", "2024-05-01 14:00", 240, "4 hours", "Some usage"),
-            (2, 102, "2024-05-01 15:00", "2024-05-01 18:00", 180, "3 hours", "Another usage"),
-            (1, 101, "2024-05-01 10:00", "2024-05-01 14:00", 240, "4 hours", "Some usage"),
-            (2, 102, "2024-05-01 15:00", "2024-05-01 18:00", 180, "3 hours", "Another usage"),
-            (1, 101, "2024-05-01 10:00", "2024-05-01 14:00", 240, "4 hours", "Some usage"),
-            (2, 102, "2024-05-01 15:00", "2024-05-01 18:00", 180, "3 hours", "Another usage"),
-            (1, 101, "2024-05-01 10:00", "2024-05-01 14:00", 240, "4 hours", "Some usage"),
-            # Add more sample data here if needed
-        ]
+        sample_data = self.server_api.get_restrictions()
 
         for data in sample_data:
             self.restrictions.insert("", "end", values=data)
 
 
-        self.add_restriction_button = Ctk.CTkButton(self, text="Add Restriction", command=self.add_restriction, width=200, height=30, font=(GENERAL_FONT, 20))
-        self.modify_restriction_button = Ctk.CTkButton(self, text="Modify Restriction", command=self.modify_restriction, width=200, height=30, font=(GENERAL_FONT, 20))
-        self.delete_restriction_button = Ctk.CTkButton(self, text="Delete Restriction", command=self.delete_restriction, width=200, height=30, font=(GENERAL_FONT, 20))
-
+        self.add_restriction_button = Ctk.CTkButton(self, text="Add Restriction", command=self.add_restriction, width=200, height=30, font=(GENERAL_FONT, 20), text_color='light green')
         self.add_restriction_button.grid(row=2, column=0, pady=10, padx=10)
+
+        # Initially set the buttons to disabled state and gray color
+        self.modify_restriction_button = Ctk.CTkButton(self, text="Modify Restriction", command=self.modify_restriction, width=200, height=30, font=(GENERAL_FONT, 20), state='disabled')
+        self.delete_restriction_button = Ctk.CTkButton(self, text="Delete Restriction", command=self.delete_restriction, width=200, height=30, font=(GENERAL_FONT, 20), state='disabled')
         self.modify_restriction_button.grid(row=3, column=0, pady=10, padx=10)
         self.delete_restriction_button.grid(row=4, column=0, pady=10, padx=10)
+        # Bind a function to the Treeview's select event
+        self.restrictions.bind('<<TreeviewSelect>>', self.on_select)
 
-
-
-
+    def on_select(self, event):
+        # Change the state and color of the buttons when a row is selected
+        self.modify_restriction_button.configure(state='normal')
+        self.delete_restriction_button.configure(state='normal', text_color='red')
 
 
     def add_restriction(self):
