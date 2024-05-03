@@ -191,7 +191,7 @@ class ChildView(Ctk.CTkFrame):
         self.title.grid(row=0, column=0, pady=10, padx=10, columnspan=10)
 
 
-        COLUMNS = ("id", "child_id", "start_time", "end_time", "allowed_time", "time_span", "usage")
+        COLUMNS = ("id", "program_name", "start_time", "end_time", "allowed_time", "time_span", "usage")
 
         # Creating Treeview widget
         self.restrictions = ttk.Treeview(self, columns=COLUMNS, show="headings")
@@ -209,7 +209,7 @@ class ChildView(Ctk.CTkFrame):
 
         # Define headings for columns
         self.restrictions.heading("id", text="ID")
-        self.restrictions.heading("child_id", text="Child ID")
+        self.restrictions.heading("program_name", text="Program Name")
         self.restrictions.heading("start_time", text="Start Time")
         self.restrictions.heading("end_time", text="End Time")
         self.restrictions.heading("allowed_time", text="Allowed Time")
@@ -217,7 +217,7 @@ class ChildView(Ctk.CTkFrame):
         self.restrictions.heading("usage", text="Usage")
 
         self.restrictions.column("id", width=20)
-        self.restrictions.column("child_id", width=50)
+        self.restrictions.column("program_name", width=50)
         self.restrictions.column("start_time", width=150)
         self.restrictions.column("end_time", width=150)
         self.restrictions.column("allowed_time", width=100)
@@ -229,7 +229,7 @@ class ChildView(Ctk.CTkFrame):
         sample_data = self.server_api.get_restrictions(self.child_name)
 
         for data in sample_data:
-            self.restrictions.insert("", "end", values=data)
+            self.restrictions.insert("", "end", values=(data.id, data.program_name, data.start_time, data.end_time, data.allowed_time, data.time_span, data.usage_time))
 
 
         self.add_restriction_button = Ctk.CTkButton(self, text="Add Restriction", command=self.add_restriction, width=200, height=30, font=(GENERAL_FONT, 20), text_color='light green')
@@ -242,6 +242,9 @@ class ChildView(Ctk.CTkFrame):
         self.delete_restriction_button.grid(row=4, column=0, pady=10, padx=10)
         # Bind a function to the Treeview's select event
         self.restrictions.bind('<<TreeviewSelect>>', self.on_select)
+
+        self.go_back_btn = Ctk.CTkButton(self, text="Go Back", command=self.go_back, width=200, height=30, font=(GENERAL_FONT, 20))
+        self.go_back_btn.grid(row=5, column=0, pady=10, padx=10)
 
     def on_select(self, event):
         # Change the state and color of the buttons when a row is selected
@@ -265,6 +268,13 @@ class ChildView(Ctk.CTkFrame):
         # self.parent.frame = DeleteRestrictionFrame(self.parent, self.server_api)
         # self.parent.frame.grid(row=1, column=0, columnspan=100)
 
+    def go_back(self):
+        self.grid_forget()
+        self.place_forget()
+
+        self.parent.frame = DashboardFrame(self.parent, self.server_api)
+        self.parent.frame.grid(row=1, column=0, columnspan=100)
+
 class AddRestrictionFrame(Ctk.CTkFrame):
     def __init__(self, parent, server_api, child_name, *args, **kwargs):
         self.parent = parent
@@ -275,7 +285,7 @@ class AddRestrictionFrame(Ctk.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
         
-        self.title = Ctk.CTkLabel(self, text="Add Restriction", font=(GENERAL_FONT, TITLE_FONT_SIZE))
+        self.title = Ctk.CTkLabel(self, text=f"Add Restriction", font=(GENERAL_FONT, TITLE_FONT_SIZE))
         self.title.grid(
             row=0, column=0, columnspan=4,
             pady=40, 
@@ -283,8 +293,7 @@ class AddRestrictionFrame(Ctk.CTkFrame):
 
 
 
-        self.program_options = ["Program 1", "Program 2", "Program 3", "Asda", "basdad", "Anjb", "Program 1", "Program 2", "Program 3", "Asda", "basdad","Program 1","Program 1", "Program 2", "Program 3", "Asda", "basdad", "Anjb", "Program 1", "Program 2", "Program 3", "Asda", "basdad", "Program 2", "Program 3", "Asda", "basdad", "Anjb", "Program 1", "Program 2", "Program 3", "Asda", "basdad", "Anjb", "Program 1", "Program 2", "Program 3", "Asda", "basdad", "Anjb", "Program 1", "Program 2", "Program 3", "Asda", "basdad", "Anjb"]
-        # Live search option menu
+        self.program_options = self.server_api.get_programs(self.child_name)
         self.search_entry = Ctk.CTkEntry(self, placeholder_text="Search Program", width=300, height=30, font=(GENERAL_FONT, 25))
         self.search_entry.grid(row=1, column=0, columnspan=2, pady=10, padx=10)
         self.search_entry.bind("<KeyRelease>", self.search)
@@ -337,7 +346,12 @@ class AddRestrictionFrame(Ctk.CTkFrame):
                         padx=10)
 
     def add_restriction(self):
-        # self.server_api.add_restriction(self.child_id.get(), self.restriction.get())
+        print(f"Program: {self.program_name.get()}")
+        print(f"Start Time: {self.start_time.get()}")
+        print(f"End Time: {self.end_time.get()}")
+        print(f"Allowed Time: {self.allowed_time.get()}")
+        print(f"Time Span: {self.time_span.get()}")
+        self.server_api.add_restriction(self.child_name, self.program_name.get(), self.start_time.get(), self.end_time.get(), self.allowed_time.get(), self.time_span.get())
         self.go_back()
 
     def go_back(self):

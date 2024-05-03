@@ -17,6 +17,8 @@ class GUI(Ctk.CTk):
         self.resizable(False, False)
         self.columnconfigure(0, weight=1)
         self.title("Watchapp")
+
+        Ctk.set_appearance_mode("Dark")
         
         # bg = tk.PhotoImage(file="C:/Networks/Watchapp/tests/screens_tests/dark_bg.jpg")
         #make it bg
