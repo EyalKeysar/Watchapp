@@ -8,7 +8,7 @@ import customtkinter as Ctk
 from .consts import *
 from PIL import Image, ImageTk
 import math
-from .Customlistbox import CustomScrolledListbox
+from CTkMessagebox import CTkMessagebox
 
 class DashboardFrame(Ctk.CTkFrame):
     def __init__(self, parent, server_api, *args, **kwargs):
@@ -264,9 +264,24 @@ class ChildView(Ctk.CTkFrame):
         # self.parent.frame.grid(row=1, column=0, columnspan=100)
 
     def delete_restriction(self):
-        pass
-        # self.parent.frame = DeleteRestrictionFrame(self.parent, self.server_api)
-        # self.parent.frame.grid(row=1, column=0, columnspan=100)
+        # pop up a confirmation dialog
+        popup = CTkMessagebox(self, title="Delete Restriction", message="Are you sure you want to delete this restriction?", options=["Yes", "No"], option_focus=["No"])
+        popup.grid()
+
+        # popup.wait_for_input()
+        response = popup.get()
+        if response == "Yes":
+            self.delete_restriction_confirm()
+        else:
+            popup.destroy()
+
+
+    def delete_restriction_confirm(self):
+        # Delete the selected restriction
+        selected_item = self.restrictions.selection()[0]
+        self.server_api.remove_restriction(self.child_name, self.restrictions.item(selected_item, "values")[1])
+        self.restrictions.delete(selected_item)
+        self.go_back()
 
     def go_back(self):
         self.grid_forget()
