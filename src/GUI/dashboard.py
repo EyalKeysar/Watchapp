@@ -3,6 +3,7 @@ from tkinter import ttk
 from tkinter_webcam import webcam
 from typing import Tuple
 
+
 import customtkinter as Ctk
 from .consts import *
 from PIL import Image, ImageTk
@@ -66,6 +67,7 @@ class CardFrame(Ctk.CTkFrame):
         self.grid_rowconfigure(0, weight=1)
 
         self.default_fg_color = "brown"
+        self.child_name = child_data.child_name
         
         print("child_data",child_data)
         print("child data type",type(child_data))
@@ -79,7 +81,7 @@ class CardFrame(Ctk.CTkFrame):
         self.name = Ctk.CTkLabel(self, text="Statistics", font=(GENERAL_FONT, 20))
         self.name.grid(row=1, column=0, pady=10, padx=50, columnspan=3)
 
-        self.stat1 = Ctk.CTkLabel(self, text="Stat 1", font=(GENERAL_FONT, 15))
+        self.stat1 = Ctk.CTkLabel(self, text="time used", font=(GENERAL_FONT, 15))
         self.stat1.grid(row=2, column=0, pady=10, padx=50)
         self.stat2 = Ctk.CTkLabel(self, text="Stat 2", font=(GENERAL_FONT, 15))
         self.stat2.grid(row=2, column=1, pady=10, padx=50)
@@ -102,7 +104,7 @@ class CardFrame(Ctk.CTkFrame):
             card.place_forget()
         self.parent.frame.grid_forget()
         self.parent.frame.add_child_button.grid_forget()
-        self.parent.frame = ChildView(self.parent, self.server_api)
+        self.parent.frame = ChildView(self.parent, self.server_api, self.child_name)
         self.parent.frame.grid(row=1, column=0, columnspan=100)
 
 
@@ -176,9 +178,10 @@ class AddChildFrame(Ctk.CTkFrame):
 
 
 class ChildView(Ctk.CTkFrame):
-    def __init__(self, parent, server_api, *args, **kwargs):
+    def __init__(self, parent, server_api, child_name, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.parent = parent
+        self.child_name = child_name
         self.server_api = server_api
         self.grid(sticky=tk.NSEW)
         self.grid_columnconfigure(0, weight=1)
@@ -223,7 +226,7 @@ class ChildView(Ctk.CTkFrame):
 
 
         # Inserting sample data
-        sample_data = self.server_api.get_restrictions()
+        sample_data = self.server_api.get_restrictions(self.child_name)
 
         for data in sample_data:
             self.restrictions.insert("", "end", values=data)
@@ -247,9 +250,10 @@ class ChildView(Ctk.CTkFrame):
 
 
     def add_restriction(self):
-        pass
-        # self.parent.frame = AddRestrictionFrame(self.parent, self.server_api)
-        # self.parent.frame.grid(row=1, column=0, columnspan=100)
+        self.grid_forget()
+        self.parent.frame.grid_forget()
+        self.parent.frame = AddRestrictionFrame(self.parent, self.server_api, self.child_name)
+        self.parent.frame.grid(row=1, column=0, columnspan=100)
 
     def modify_restriction(self):
         pass
@@ -260,3 +264,145 @@ class ChildView(Ctk.CTkFrame):
         pass
         # self.parent.frame = DeleteRestrictionFrame(self.parent, self.server_api)
         # self.parent.frame.grid(row=1, column=0, columnspan=100)
+
+class AddRestrictionFrame(Ctk.CTkFrame):
+    def __init__(self, parent, server_api, child_name, *args, **kwargs):
+        self.parent = parent
+        self.server_api = server_api
+        self.child_name = child_name
+        super().__init__(parent, *args, **kwargs)
+        self.grid(sticky=STICKY_LAYOUT)    
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+        
+        self.title = Ctk.CTkLabel(self, text="Add Restriction", font=(GENERAL_FONT, TITLE_FONT_SIZE))
+        self.title.grid(
+            row=0, column=0, columnspan=4,
+            pady=40, 
+            padx=10)
+
+
+
+        self.program_options = ["Program 1", "Program 2", "Program 3", "Asda", "basdad", "Anjb", "Program 1", "Program 2", "Program 3", "Asda", "basdad","Program 1","Program 1", "Program 2", "Program 3", "Asda", "basdad", "Anjb", "Program 1", "Program 2", "Program 3", "Asda", "basdad", "Program 2", "Program 3", "Asda", "basdad", "Anjb", "Program 1", "Program 2", "Program 3", "Asda", "basdad", "Anjb", "Program 1", "Program 2", "Program 3", "Asda", "basdad", "Anjb", "Program 1", "Program 2", "Program 3", "Asda", "basdad", "Anjb"]
+        # Live search option menu
+        self.search_entry = Ctk.CTkEntry(self, placeholder_text="Search Program", width=300, height=30, font=(GENERAL_FONT, 25))
+        self.search_entry.grid(row=1, column=0, columnspan=2, pady=10, padx=10)
+        self.search_entry.bind("<KeyRelease>", self.search)
+
+        self.program_name = Ctk.CTkOptionMenu(self, values=self.program_options, width=300, height=30, font=(GENERAL_FONT, 20))
+        self.program_name.configure(dropdown_font=(GENERAL_FONT, 15))
+        self.program_name.grid(row=1, column=2, columnspan=2, pady=10, padx=10)
+
+        self.start_time_label = Ctk.CTkLabel(self, text="Start Time", font=(GENERAL_FONT, 20))
+        self.start_time_label.grid(row=2, column=0, pady=10, padx=10)
+        self.start_time = tk.Spinbox(self, from_=0, to=24, width=3, font=(GENERAL_FONT, 25), bg=BG_COLOR, fg='#1f6aa5', bd=0, wrap=True)
+        self.start_time.grid(row=2, column=1, pady=10, padx=10)
+
+        self.start_time.bind("<KeyRelease>", self.validate_time)
+
+
+        self.end_time_label = Ctk.CTkLabel(self, text="End Time", font=(GENERAL_FONT, 20))
+        self.end_time_label.grid(row=2, column=2, pady=10, padx=10)
+        self.end_time = tk.Spinbox(self, from_=0, to=24, width=3, font=(GENERAL_FONT, 25), bg=BG_COLOR, fg='#1f6aa5', bd=0, wrap=True)
+        self.end_time.grid(row=2, column=3, pady=10, padx=10)
+        self.end_time.delete(0, tk.END)
+        self.end_time.insert(0, 24)
+        # set function to validate the time on change
+        self.end_time.bind("<KeyRelease>", self.validate_time)
+
+
+        self.allowed_time_label = Ctk.CTkLabel(self, text="Allowed Time", font=(GENERAL_FONT, 20))
+        self.allowed_time_label.grid(row=4, column=0, pady=10, padx=10)
+        self.allowed_time = tk.Spinbox(self, from_=0, to=731, width=3, font=(GENERAL_FONT, 25), bg=BG_COLOR, fg='#1f6aa5', bd=0, wrap=True)
+        self.allowed_time.grid(row=4, column=1, pady=10, padx=10)
+        self.allowed_time.delete(0, tk.END)
+        self.allowed_time.insert(0, 24)
+        self.allowed_time.bind("<KeyRelease>", self.validate_allowed_time)
+
+        self.time_spans = ["Daily", "Weekly", "Monthly"]
+        self.time_span = Ctk.CTkOptionMenu(self, values=self.time_spans, width=300, height=30, font=(GENERAL_FONT, 20), command=self.validate_allowed_time)
+        self.time_span.configure(dropdown_font=(GENERAL_FONT, 15))
+        self.time_span.grid(row=4, column=2, columnspan=2, pady=10, padx=10)
+
+
+
+        self.add_restriction_btn = Ctk.CTkButton(self, text="Add Restriction", command=self.add_restriction, width=LOGIN_BTN_WIDTH, height=50, font=LOGIN_BTN_FONT)
+        self.add_restriction_btn.grid(row=10, column=0, columnspan=4,
+                        pady=10,
+                        padx=10)
+        
+        self.go_back_btn = Ctk.CTkButton(self, text="Go Back", command=self.go_back, width=200, height=40, font=LOGIN_BTN_FONT)
+        self.go_back_btn.grid(row=11, column=0, columnspan=4,
+                        pady=10,
+                        padx=10)
+
+    def add_restriction(self):
+        # self.server_api.add_restriction(self.child_id.get(), self.restriction.get())
+        self.go_back()
+
+    def go_back(self):
+        self.grid_forget()
+        self.place_forget()
+
+        self.parent.frame = ChildView(self.parent, self.server_api, self.child_name)
+        self.parent.frame.grid(row=1, column=0, columnspan=100)
+
+
+    def select_time_span(self):
+        for btn in self.time_spans_btns:
+            btn.configure(text_color='black')
+        self.add_restriction_btn.configure(text="Add Restriction", text_color='black')
+
+
+    def search(self, event):
+        # update self.program_name with the search results
+        search_term = self.search_entry.get().lower()
+        print(f"Searching for {search_term}")
+
+        # Assuming self.program_options is a list of all possible options
+        # Filter the options based on the search term
+        filtered_options = [option for option in self.program_options if search_term in option.lower()]
+
+        # Update the OptionMenu with the filtered options
+        self.program_name.configure(values=filtered_options)
+
+    def validate_time(self, event):
+        # Validate the end time to be greater than the start time
+        try: 
+            start_time = int(self.start_time.get())
+        except ValueError:
+            self.start_time.configure(fg='red')
+            return
+
+        try: 
+            end_time = int(self.end_time.get())
+        except ValueError:
+            self.end_time.configure(fg='red')
+            return
+
+
+        if end_time <= start_time or end_time > 24:
+            self.end_time.configure(fg='red')
+        else:
+            self.end_time.configure(fg='#1f6aa5')
+
+        if start_time < 0 or start_time > 24:
+            self.start_time.configure(fg='red')
+        else:
+            self.start_time.configure(fg='#1f6aa5')
+
+    def validate_allowed_time(self, event):
+        # Validate the allowed time to be greater than 0
+        try:
+            allowed_time = int(self.allowed_time.get())
+        except ValueError:
+            self.allowed_time.configure(fg='red')
+            return
+        
+        time_span = self.time_span.get()
+        if time_span == "Daily" and allowed_time > 24 or time_span == "Weekly" and allowed_time > 168 or time_span == "Monthly" and allowed_time > 744 or allowed_time < 0 or allowed_time > 744:
+            self.allowed_time.configure(fg='red')
+        else:
+            self.allowed_time.configure(fg='#1f6aa5')
+
+        

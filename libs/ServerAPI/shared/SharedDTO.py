@@ -49,7 +49,25 @@ class RestrictionSerializer:
     def deserialize(serialized):
         data = json.loads(serialized)
         return Restriction(data["id"], data["child_id"], data["program_name"], data["start_time"], data["end_time"], data["allowed_time"], data["time_span"], data["usage_time"])
+class RestrictionListSerializer:
+    @staticmethod
+    def serialize(restriction_list):
+        restrictions = []
+        for restriction in restriction_list:
+            restrictions.append(RestrictionSerializer.serialize(restriction))
+        return json.dumps(restrictions)
     
+    @staticmethod
+    def deserialize(serialized):
+        data = json.loads(serialized)
+        restrictions = []
+        for restriction in data:
+            restriction = RestrictionSerializer.deserialize(restriction)
+            restrictions.append(Restriction(restriction.id, restriction.child_id, restriction.program_name, restriction.start_time, restriction.end_time, restriction.allowed_time, restriction.time_span, restriction.usage_time))
+        
+        return restrictions
+
+
 class TimeLimitSerializer:
     @staticmethod
     def serialize(time_limit):

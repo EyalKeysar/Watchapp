@@ -134,7 +134,7 @@ class ServerAPI:
         respond = self.tls_protocol.receive()
         # parse the respond as json of list of RestrictionData
         print("respond (json res)" + respond)
-        return RestrictionSerializer.deserialize(respond)
+        return RestrictionListSerializer.deserialize(respond)
 
 
     @connection_needed

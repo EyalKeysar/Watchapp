@@ -55,7 +55,7 @@ class MockServerAPI:
         return "mockserverapi: get_statistics"
     
     @connection_needed
-    def get_restrictions(self):
+    def get_restrictions(self, child_name):
         return "mockserverapi: get_restrictions"
 
 
