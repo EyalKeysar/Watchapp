@@ -295,7 +295,7 @@ class AddRestrictionFrame(Ctk.CTkFrame):
 
         self.start_time_label = Ctk.CTkLabel(self, text="Start Time", font=(GENERAL_FONT, 20))
         self.start_time_label.grid(row=2, column=0, pady=10, padx=10)
-        self.start_time = tk.Spinbox(self, from_=0, to=24, width=3, font=(GENERAL_FONT, 25), bg=BG_COLOR, fg='#1f6aa5', bd=0, wrap=True)
+        self.start_time = tk.Spinbox(self, from_=0, to=24, width=3, font=(GENERAL_FONT, 25), bg=BG_COLOR, fg='#1f6aa5', bd=0, wrap=True, command=self.validate_time_c)
         self.start_time.grid(row=2, column=1, pady=10, padx=10)
 
         self.start_time.bind("<KeyRelease>", self.validate_time)
@@ -303,7 +303,7 @@ class AddRestrictionFrame(Ctk.CTkFrame):
 
         self.end_time_label = Ctk.CTkLabel(self, text="End Time", font=(GENERAL_FONT, 20))
         self.end_time_label.grid(row=2, column=2, pady=10, padx=10)
-        self.end_time = tk.Spinbox(self, from_=0, to=24, width=3, font=(GENERAL_FONT, 25), bg=BG_COLOR, fg='#1f6aa5', bd=0, wrap=True)
+        self.end_time = tk.Spinbox(self, from_=0, to=24, width=3, font=(GENERAL_FONT, 25), bg=BG_COLOR, fg='#1f6aa5', bd=0, wrap=True, command=self.validate_time_c)
         self.end_time.grid(row=2, column=3, pady=10, padx=10)
         self.end_time.delete(0, tk.END)
         self.end_time.insert(0, 24)
@@ -313,7 +313,7 @@ class AddRestrictionFrame(Ctk.CTkFrame):
 
         self.allowed_time_label = Ctk.CTkLabel(self, text="Allowed Time", font=(GENERAL_FONT, 20))
         self.allowed_time_label.grid(row=4, column=0, pady=10, padx=10)
-        self.allowed_time = tk.Spinbox(self, from_=0, to=731, width=3, font=(GENERAL_FONT, 25), bg=BG_COLOR, fg='#1f6aa5', bd=0, wrap=True)
+        self.allowed_time = tk.Spinbox(self, from_=0, to=731, width=3, font=(GENERAL_FONT, 25), bg=BG_COLOR, fg='#1f6aa5', bd=0, wrap=True, command=self.validate_allowed_time_c)
         self.allowed_time.grid(row=4, column=1, pady=10, padx=10)
         self.allowed_time.delete(0, tk.END)
         self.allowed_time.insert(0, 24)
@@ -405,4 +405,9 @@ class AddRestrictionFrame(Ctk.CTkFrame):
         else:
             self.allowed_time.configure(fg='#1f6aa5')
 
+    def validate_time_c(self):
+        self.validate_time(None)
+
+    def validate_allowed_time_c(self):
+        self.validate_allowed_time(None)
         
