@@ -24,8 +24,8 @@ class DashboardFrame(Ctk.CTkFrame):
         self.add_child_button = Ctk.CTkButton(self.parent, text="+", command=self.add_child, width=50, height=50, font=(GENERAL_FONT, 20))
         self.add_child_button.grid(row=1, column=1, pady=10, padx=10)
 
-        self.logout_button = Ctk.CTkButton(self.parent, text="➜", command=self.logout, width=70, height=50, font=(GENERAL_FONT, 25))
-        self.logout_button.grid(row=1, column=2, pady=10, padx=40)
+        # self.logout_button = Ctk.CTkButton(self.parent, text="➜", command=self.logout, width=70, height=50, font=(GENERAL_FONT, 25))
+        # self.logout_button.grid(row=1, column=2, pady=10, padx=40)
 
         self.server_api.get_children()
 
@@ -49,6 +49,7 @@ class DashboardFrame(Ctk.CTkFrame):
 
     def add_child(self):
         self.grid_forget()
+        self.add_child_button.grid_forget()
         for card in self.cards:
             card.place_forget()
         self.add_child_frame = AddChildFrame(self.parent, self.server_api)
