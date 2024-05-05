@@ -68,7 +68,8 @@ class LoginFrame(Ctk.CTkFrame):
     def login(self):
         print(f"Email: {self.email.get()}")
         print(f"Password: {self.password.get()}")
-        if self.server_api.login(self.email.get(), self.password.get()) == "False":
+        self.server_api.login(self.email.get(), self.password.get())
+        if  self.server_api.is_authenticated == False:
             print("Login failed")
             self.invalid_credentials = Ctk.CTkLabel(self, text=" * Invalid credentials", font=(GENERAL_FONT, 20), text_color="red")
             self.invalid_credentials.grid(row=6, column=0, pady=LOGIN_ERROR_PADY)
@@ -80,9 +81,6 @@ class LoginFrame(Ctk.CTkFrame):
             self.parent.frame.grid(row=1, column=0, columnspan=100)
 
 
-
-        
-    
     def forgot_password(self):
         print("Forgot password?")
     
