@@ -201,8 +201,8 @@ class ChildView(Ctk.CTkFrame):
 
         style = ttk.Style(self)
         style.theme_use('default')  # Ensure default theme is used
-        style.configure('Dark.Treeview', background='#363636', foreground='white', fieldbackground='#363636', font=(GENERAL_FONT, 10))
-        style.configure('Dark.Treeview.Heading', background='#363636', foreground='white', font=(GENERAL_FONT, 10))
+        style.configure('Dark.Treeview', background='#363636', foreground='white', fieldbackground='#363636', font=(GENERAL_FONT, 15))
+        style.configure('Dark.Treeview.Heading', background='#363636', foreground='white', font=(GENERAL_FONT, 15))
         style.map('Treeview', background=[('selected', '#3e465c')], foreground=[('selected', 'white')])
         style.map('Treeview.Heading', background=[('active', '#363636')])
         self.restrictions.configure(style='Dark.Treeview')
@@ -217,7 +217,7 @@ class ChildView(Ctk.CTkFrame):
         self.restrictions.heading("usage", text="Usage")
 
         self.restrictions.column("id", width=20)
-        self.restrictions.column("program_name", width=50)
+        self.restrictions.column("program_name", width=100)
         self.restrictions.column("start_time", width=150)
         self.restrictions.column("end_time", width=150)
         self.restrictions.column("allowed_time", width=100)
@@ -281,7 +281,6 @@ class ChildView(Ctk.CTkFrame):
         selected_item = self.restrictions.selection()[0]
         self.server_api.remove_restriction(self.child_name, self.restrictions.item(selected_item, "values")[1])
         self.restrictions.delete(selected_item)
-        self.go_back()
 
     def go_back(self):
         self.grid_forget()
