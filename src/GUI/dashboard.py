@@ -309,6 +309,8 @@ class AddRestrictionFrame(Ctk.CTkFrame):
 
 
         self.program_options = self.server_api.get_programs(self.child_name)
+        self.program_options = [i[1] for i in self.program_options]
+        print("Program options", self.program_options)
         self.search_entry = Ctk.CTkEntry(self, placeholder_text="Search Program", width=300, height=30, font=(GENERAL_FONT, 25))
         self.search_entry.grid(row=1, column=0, columnspan=2, pady=10, padx=10)
         self.search_entry.bind("<KeyRelease>", self.search)
