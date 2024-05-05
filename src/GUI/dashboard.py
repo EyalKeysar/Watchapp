@@ -316,39 +316,44 @@ class AddRestrictionFrame(Ctk.CTkFrame):
         self.search_entry.bind("<KeyRelease>", self.search)
 
         self.program_name = Ctk.CTkOptionMenu(self, values=self.program_options, width=300, height=30, font=(GENERAL_FONT, 20))
-        self.program_name.configure(dropdown_font=(GENERAL_FONT, 15))
+        self.program_name.configure(dropdown_font=(GENERAL_FONT, 20))
         self.program_name.grid(row=1, column=2, columnspan=2, pady=10, padx=10)
 
+        self.each_day_label = Ctk.CTkLabel(self, text="Each Day", font=(GENERAL_FONT, 25))
+        self.each_day_label.grid(row=2, column=0, columnspan=4, pady=10, padx=10)
+
         self.start_time_label = Ctk.CTkLabel(self, text="Start Time", font=(GENERAL_FONT, 20))
-        self.start_time_label.grid(row=2, column=0, pady=10, padx=10)
+        self.start_time_label.grid(row=3, column=0, pady=10, padx=10)
         self.start_time = tk.Spinbox(self, from_=0, to=24, width=3, font=(GENERAL_FONT, 25), bg=BG_COLOR, fg='#1f6aa5', bd=0, wrap=True, command=self.validate_time_c)
-        self.start_time.grid(row=2, column=1, pady=10, padx=10)
+        self.start_time.grid(row=3, column=1, pady=10, padx=10)
 
         self.start_time.bind("<KeyRelease>", self.validate_time)
 
 
         self.end_time_label = Ctk.CTkLabel(self, text="End Time", font=(GENERAL_FONT, 20))
-        self.end_time_label.grid(row=2, column=2, pady=10, padx=10)
+        self.end_time_label.grid(row=3, column=2, pady=10, padx=10)
         self.end_time = tk.Spinbox(self, from_=0, to=24, width=3, font=(GENERAL_FONT, 25), bg=BG_COLOR, fg='#1f6aa5', bd=0, wrap=True, command=self.validate_time_c)
-        self.end_time.grid(row=2, column=3, pady=10, padx=10)
+        self.end_time.grid(row=3, column=3, pady=10, padx=10)
         self.end_time.delete(0, tk.END)
         self.end_time.insert(0, 24)
         # set function to validate the time on change
         self.end_time.bind("<KeyRelease>", self.validate_time)
 
+        self.time_span_label = Ctk.CTkLabel(self, text="Time Span", font=(GENERAL_FONT, 25))
+        self.time_span_label.grid(row=4, column=0, columnspan=4, pady=10, padx=10)
 
         self.allowed_time_label = Ctk.CTkLabel(self, text="Allowed Time", font=(GENERAL_FONT, 20))
-        self.allowed_time_label.grid(row=4, column=0, pady=10, padx=10)
+        self.allowed_time_label.grid(row=5, column=0, pady=10, padx=10)
         self.allowed_time = tk.Spinbox(self, from_=0, to=731, width=3, font=(GENERAL_FONT, 25), bg=BG_COLOR, fg='#1f6aa5', bd=0, wrap=True, command=self.validate_allowed_time_c)
-        self.allowed_time.grid(row=4, column=1, pady=10, padx=10)
+        self.allowed_time.grid(row=5, column=1, pady=10, padx=10)
         self.allowed_time.delete(0, tk.END)
         self.allowed_time.insert(0, 24)
         self.allowed_time.bind("<KeyRelease>", self.validate_allowed_time)
 
         self.time_spans = ["Daily", "Weekly", "Monthly"]
         self.time_span = Ctk.CTkOptionMenu(self, values=self.time_spans, width=300, height=30, font=(GENERAL_FONT, 20), command=self.validate_allowed_time)
-        self.time_span.configure(dropdown_font=(GENERAL_FONT, 15))
-        self.time_span.grid(row=4, column=2, columnspan=2, pady=10, padx=10)
+        self.time_span.configure(dropdown_font=(GENERAL_FONT, 20))
+        self.time_span.grid(row=5, column=2, columnspan=2, pady=10, padx=10)
 
 
 
