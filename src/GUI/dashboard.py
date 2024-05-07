@@ -19,7 +19,7 @@ class DashboardFrame(Ctk.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
 
         self.title = Ctk.CTkLabel(self, text="Dashboard", font=(GENERAL_FONT, TITLE_FONT_SIZE))
-        self.title.grid(row=0, column=0, pady=10, padx=10)
+        self.title.grid(row=0, column=0, pady=10, padx=10, columnspan=100)
 
         self.add_child_button = Ctk.CTkButton(self.parent, text="+", command=self.add_child, width=50, height=50, font=(GENERAL_FONT, 20))
         self.add_child_button.grid(row=1, column=1, pady=10, padx=10)
@@ -31,7 +31,7 @@ class DashboardFrame(Ctk.CTkFrame):
 
         self.cards = []
         max_cards_per_row = 2
-        card_width = 500  # Adjust according to your card size
+        card_width = 550  # Adjust according to your card size
         card_height = 200  # Adjust according to your card size
         row_height = card_height + 20  # Adjust vertical spacing between rows
         for i, child_data in enumerate(self.server_api.children):
@@ -53,7 +53,9 @@ class DashboardFrame(Ctk.CTkFrame):
         for card in self.cards:
             card.place_forget()
         self.add_child_frame = AddChildFrame(self.parent, self.server_api)
-        self.add_child_frame.place(x=SCREEN_WIDTH // 2 - 200, y=SCREEN_HEIGHT // 2 - 100)
+        self.add_child_frame.place(x=SCREEN_WIDTH // 2 - 200, y=SCREEN_HEIGHT // 2 - 200)
+        # self.add_child_frame = AddChildFrame(self.parent, self.server_api)
+        # self.add_child_frame.grid(row=1, column=0, columnspan=100, pady=110)
 
     def logout(self):
         pass
@@ -89,8 +91,17 @@ class CardFrame(Ctk.CTkFrame):
         self.stat3 = Ctk.CTkLabel(self, text="Stat 3", font=(GENERAL_FONT, 15))
         self.stat3.grid(row=2, column=2, pady=10, padx=50)
 
-        self.view_button = Ctk.CTkButton(self, text="View", command=self.view_child, width=300, height=30, font=(GENERAL_FONT, 20))
-        self.view_button.grid(row=3, column=0, pady=10, padx=50, columnspan=3)
+        VIEW_BTNS_PADX = 10
+        VIEW_BTNS_WIDTH = 150
+
+        self.view_button = Ctk.CTkButton(self, text="Restrictions", command=self.view_child, width=VIEW_BTNS_WIDTH, height=30, font=(GENERAL_FONT, 20))
+        self.view_button.grid(row=3, column=0, pady=10, padx=VIEW_BTNS_PADX, columnspan=1)
+
+        self.view_processes_button = Ctk.CTkButton(self, text="Processes", command=self.view_child, width=VIEW_BTNS_WIDTH, height=30, font=(GENERAL_FONT, 20))
+        self.view_processes_button.grid(row=3, column=1, pady=10, padx=VIEW_BTNS_PADX, columnspan=1)
+
+        self.view_screen_button = Ctk.CTkButton(self, text="Screen", command=self.view_child, width=VIEW_BTNS_WIDTH, height=30, font=(GENERAL_FONT, 20))
+        self.view_screen_button.grid(row=3, column=2, pady=10, padx=VIEW_BTNS_PADX, columnspan=1)
 
         # self.update_active_status()
 
@@ -188,14 +199,14 @@ class ChildView(Ctk.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
-        self.title = Ctk.CTkLabel(self, text="Child View", font=(GENERAL_FONT, TITLE_FONT_SIZE))
+        self.title = Ctk.CTkLabel(self, text=f"{str(child_name)}'s Restrictions", font=(GENERAL_FONT, TITLE_FONT_SIZE))
         self.title.grid(row=0, column=0, pady=10, padx=10, columnspan=10)
 
 
         COLUMNS = ("id", "program_name", "start_time", "end_time", "allowed_time", "time_span", "usage")
 
         # Creating Treeview widget
-        self.restrictions = ttk.Treeview(self, columns=COLUMNS, show="headings")
+        self.restrictions = ttk.Treeview(self, columns=COLUMNS, show="headings", height=20)
         self.restrictions.grid(row=1, column=0, pady=10, padx=10, columnspan=10, sticky=tk.NSEW)
 
         # Configuring style for Treeview
@@ -257,7 +268,7 @@ class ChildView(Ctk.CTkFrame):
         self.grid_forget()
         self.parent.frame.grid_forget()
         self.parent.frame = AddRestrictionFrame(self.parent, self.server_api, self.child_name)
-        self.parent.frame.grid(row=1, column=0, columnspan=100)
+        self.parent.frame.grid(row=1, column=0, columnspan=100, pady=70)
 
     def modify_restriction(self):
         pass
@@ -319,33 +330,57 @@ class AddRestrictionFrame(Ctk.CTkFrame):
         self.program_name.configure(dropdown_font=(GENERAL_FONT, 20))
         self.program_name.grid(row=1, column=2, columnspan=2, pady=10, padx=10)
 
-        self.each_day_label = Ctk.CTkLabel(self, text="Each Day", font=(GENERAL_FONT, 25))
-        self.each_day_label.grid(row=2, column=0, columnspan=4, pady=10, padx=10)
+        self.each_day_label = Ctk.CTkLabel(self, text="Each Day:", font=(GENERAL_FONT, 20))
+        self.each_day_label.grid(row=2, column=1, columnspan=1, pady=10, padx=10)
+
+        self.start_to_end_viewer = Ctk.CTkLabel(self, text="00:00 - 24:00", font=(GENERAL_FONT, 25))
+        self.start_to_end_viewer.grid(row=2, column=2, columnspan=1, pady=10, padx=10)
 
         self.start_time_label = Ctk.CTkLabel(self, text="Start Time", font=(GENERAL_FONT, 20))
-        self.start_time_label.grid(row=3, column=0, pady=10, padx=10)
-        self.start_time = tk.Spinbox(self, from_=0, to=24, width=3, font=(GENERAL_FONT, 25), bg=BG_COLOR, fg='#1f6aa5', bd=0, wrap=True, command=self.validate_time_c)
-        self.start_time.grid(row=3, column=1, pady=10, padx=10)
+        self.start_time_label.grid(row=4, column=0, pady=10, padx=10)
+        # self.start_time = tk.Spinbox(self, from_=0, to=24, width=3, font=(GENERAL_FONT, 25), bg=BG_COLOR, fg='#1f6aa5', bd=0, wrap=True, command=self.validate_time_c)
+        # self.start_time.grid(row=3, column=1, pady=10, padx=10)
 
-        self.start_time.bind("<KeyRelease>", self.validate_time)
+        # self.start_time.bind("<KeyRelease>", self.validate_time)
 
+        self.start_time = Ctk.CTkSlider(self, from_=0, to=24, width=175, height=20, button_color="#1f6aa5", button_hover_color='#144870')
+        self.start_time.grid(row=4, column=1, pady=10, padx=10)
+        self.start_time.set(0)
+        
 
         self.end_time_label = Ctk.CTkLabel(self, text="End Time", font=(GENERAL_FONT, 20))
-        self.end_time_label.grid(row=3, column=2, pady=10, padx=10)
-        self.end_time = tk.Spinbox(self, from_=0, to=24, width=3, font=(GENERAL_FONT, 25), bg=BG_COLOR, fg='#1f6aa5', bd=0, wrap=True, command=self.validate_time_c)
-        self.end_time.grid(row=3, column=3, pady=10, padx=10)
-        self.end_time.delete(0, tk.END)
-        self.end_time.insert(0, 24)
-        # set function to validate the time on change
-        self.end_time.bind("<KeyRelease>", self.validate_time)
+        self.end_time_label.grid(row=4, column=2, pady=10, padx=10)
+        # self.end_time = tk.Spinbox(self, from_=0, to=24, width=3, font=(GENERAL_FONT, 25), bg=BG_COLOR, fg='#1f6aa5', bd=0, wrap=True, command=self.validate_time_c)
+        # self.end_time.grid(row=3, column=3, pady=10, padx=10)
+        # self.end_time.delete(0, tk.END)
+        # self.end_time.insert(0, 24)
+        # # set function to validate the time on change
+        # self.end_time.bind("<KeyRelease>", self.validate_time)
 
-        self.time_span_label = Ctk.CTkLabel(self, text="Time Span", font=(GENERAL_FONT, 25))
-        self.time_span_label.grid(row=4, column=0, columnspan=4, pady=10, padx=10)
+        self.end_time = Ctk.CTkSlider(self, from_=0, to=24, width=175, height=20, button_color="#1f6aa5", button_hover_color='#144870')
+        self.end_time.grid(row=4, column=3, pady=10, padx=10)
+        self.end_time.set(24)
 
-        self.allowed_time_label = Ctk.CTkLabel(self, text="Allowed Time", font=(GENERAL_FONT, 20))
-        self.allowed_time_label.grid(row=5, column=0, pady=10, padx=10)
-        self.allowed_time = tk.Spinbox(self, from_=0, to=731, width=3, font=(GENERAL_FONT, 25), bg=BG_COLOR, fg='#1f6aa5', bd=0, wrap=True, command=self.validate_allowed_time_c)
-        self.allowed_time.grid(row=5, column=1, pady=10, padx=10)
+        self.start_time.bind("<ButtonRelease-1>", self.validate_time)
+        self.end_time.bind("<ButtonRelease-1>", self.validate_time)
+
+
+        # self.start_time_viewer = Ctk.CTkLabel(self, text="00:00", font=(GENERAL_FONT, 20))
+        # self.start_time_viewer.grid(row=4, column=1, pady=10, padx=10)
+
+        # self.end_time_viewer = Ctk.CTkLabel(self, text="24:00", font=(GENERAL_FONT, 20))
+        # self.end_time_viewer.grid(row=4, column=3, pady=10, padx=10)
+
+
+
+        # self.time_span_label = Ctk.CTkLabel(self, text="Time Span", font=(GENERAL_FONT, 20))
+        # self.time_span_label.grid(row=6, column=2, columnspan=1, pady=10, padx=10)
+
+        self.allowed_time_label = Ctk.CTkLabel(self, text="Allowed Time (Hours)", font=(GENERAL_FONT, 20))
+        self.allowed_time_label.grid(row=6, column=0, pady=10, padx=10)
+
+        self.allowed_time = tk.Spinbox(self, from_=0, to=731, width=4, font=(GENERAL_FONT, 25), bg=BG_COLOR, fg='#1f6aa5', bd=0, wrap=True, command=self.validate_allowed_time_c)
+        self.allowed_time.grid(row=6, column=1, pady=10, padx=10)
         self.allowed_time.delete(0, tk.END)
         self.allowed_time.insert(0, 24)
         self.allowed_time.bind("<KeyRelease>", self.validate_allowed_time)
@@ -353,18 +388,18 @@ class AddRestrictionFrame(Ctk.CTkFrame):
         self.time_spans = ["Daily", "Weekly", "Monthly"]
         self.time_span = Ctk.CTkOptionMenu(self, values=self.time_spans, width=300, height=30, font=(GENERAL_FONT, 20), command=self.validate_allowed_time)
         self.time_span.configure(dropdown_font=(GENERAL_FONT, 20))
-        self.time_span.grid(row=5, column=2, columnspan=2, pady=10, padx=10)
+        self.time_span.grid(row=6, column=2, columnspan=2, pady=10, padx=10)
 
 
 
         self.add_restriction_btn = Ctk.CTkButton(self, text="Add Restriction", command=self.add_restriction, width=LOGIN_BTN_WIDTH, height=50, font=LOGIN_BTN_FONT)
-        self.add_restriction_btn.grid(row=10, column=0, columnspan=4,
-                        pady=10,
+        self.add_restriction_btn.grid(row=11, column=0, columnspan=4,
+                        pady=5,
                         padx=10)
         
-        self.go_back_btn = Ctk.CTkButton(self, text="Go Back", command=self.go_back, width=200, height=40, font=LOGIN_BTN_FONT)
-        self.go_back_btn.grid(row=11, column=0, columnspan=4,
-                        pady=10,
+        self.go_back_btn = Ctk.CTkButton(self, text="Go Back", command=self.go_back, width=200, height=30, font=(GENERAL_FONT, 20))
+        self.go_back_btn.grid(row=10, column=0, columnspan=4,
+                        pady=5,
                         padx=10)
 
     def add_restriction(self):
@@ -384,16 +419,9 @@ class AddRestrictionFrame(Ctk.CTkFrame):
         self.parent.frame.grid(row=1, column=0, columnspan=100)
 
 
-    def select_time_span(self):
-        for btn in self.time_spans_btns:
-            btn.configure(text_color='black')
-        self.add_restriction_btn.configure(text="Add Restriction", text_color='black')
-
-
     def search(self, event):
         # update self.program_name with the search results
         search_term = self.search_entry.get().lower()
-        print(f"Searching for {search_term}")
 
         # Assuming self.program_options is a list of all possible options
         # Filter the options based on the search term
@@ -404,28 +432,24 @@ class AddRestrictionFrame(Ctk.CTkFrame):
 
     def validate_time(self, event):
         # Validate the end time to be greater than the start time
-        try: 
-            start_time = int(self.start_time.get())
-        except ValueError:
-            self.start_time.configure(fg='red')
-            return
+        start_time = int(self.start_time.get())
 
-        try: 
-            end_time = int(self.end_time.get())
-        except ValueError:
-            self.end_time.configure(fg='red')
-            return
+        end_time = int(self.end_time.get())
 
 
         if end_time <= start_time or end_time > 24:
-            self.end_time.configure(fg='red')
+            self.end_time.configure(button_color='red', button_hover_color='dark red')
+            self.start_time.configure(button_color='red', button_hover_color='dark red')
         else:
-            self.end_time.configure(fg='#1f6aa5')
+            self.end_time.configure(button_color='#1f6aa5', button_hover_color='#144870')
+            self.start_time.configure(button_color='#1f6aa5', button_hover_color='#144870')
 
-        if start_time < 0 or start_time > 24:
-            self.start_time.configure(fg='red')
-        else:
-            self.start_time.configure(fg='#1f6aa5')
+        # self.start_time_viewer.configure(text=str(start_time) + ":00")
+        # self.end_time_viewer.configure(text=str(end_time) + ":00")
+
+        self.start_to_end_viewer.configure(text=f"{str(start_time).zfill(2)}:00 - {str(end_time).zfill(2)}:00")
+
+        self.validate_all()
 
     def validate_allowed_time(self, event):
         # Validate the allowed time to be greater than 0
@@ -440,10 +464,33 @@ class AddRestrictionFrame(Ctk.CTkFrame):
             self.allowed_time.configure(fg='red')
         else:
             self.allowed_time.configure(fg='#1f6aa5')
+        
+        self.validate_all()
 
-    def validate_time_c(self):
+    def validate_time_c(self): # c for command, called when the spinbox value is changed puts event as None
         self.validate_time(None)
 
-    def validate_allowed_time_c(self):
+    def validate_allowed_time_c(self): # c for command, called when the spinbox value is changed puts event as None
         self.validate_allowed_time(None)
+
+    def validate_all(self):
+        start_time = int(self.start_time.get())
+        end_time = int(self.end_time.get())
+        try: 
+            allowed_time = int(self.allowed_time.get())
+        except ValueError:
+            self.add_restriction_btn.configure(state='disabled')
+            return False
+        
+        if end_time <= start_time:
+            self.add_restriction_btn.configure(state='disabled')
+            return False
+        
+        time_span = self.time_span.get()
+        if time_span == "Daily" and allowed_time > 24 or time_span == "Weekly" and allowed_time > 168 or time_span == "Monthly" and allowed_time > 744 or allowed_time < 0 or allowed_time > 744:
+            self.add_restriction_btn.configure(state='disabled')
+            return False
+        
+        self.add_restriction_btn.configure(state='normal')
+        return True
         

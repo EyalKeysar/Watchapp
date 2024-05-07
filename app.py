@@ -7,7 +7,9 @@ import threading
 
 def main():
     serverAPI = ServerAPI()
-    root = GUI(serverAPI)
+    mock_server = MockServerAPI()
+    # root = GUI(serverAPI)
+    root = GUI(mock_server)
     root.mainloop()
     # time.sleep(5)
     # serverAPI.login("aaaa", "aaaa")

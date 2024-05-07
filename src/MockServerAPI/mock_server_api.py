@@ -1,3 +1,5 @@
+from libs.ServerAPI.shared.SharedDTO import *
+
 class MockServerAPI:
     '''
         This class is used by the clients to communicate with the server.
@@ -13,13 +15,12 @@ class MockServerAPI:
 
     def __init__(self):
         self.is_connected = False
+        self.is_authenticated = False
         self.children = []
         
     def connect(self):
         print(f"\n\nMOCK SERVERAPI\n\nConnected to *** MOCK SERVER API ***")
         self.is_connected = True
-
-
 
 
     def build_request(self, service, command, *args):
@@ -32,10 +33,12 @@ class MockServerAPI:
 # AUTHENTICATION -----------------------------------------------------------------------------------------------------
     @connection_needed
     def login(self, email, password):
+        self.is_authenticated = True
         return True
     
     @connection_needed
     def signup(self, email, password, username):
+        self.is_authenticated = True
         return True
     
     @connection_needed
@@ -61,8 +64,12 @@ class MockServerAPI:
 
     @connection_needed
     def get_children(self):
-        self.children = ["child1", "child2", "child3"]
-        return ["mockserverapi: get_children"]
+        self.children = [ChildData(123, "parent_email", "child_name", [Restriction(1, 123, "program_name", "start_time", "end_time", "allowed_time", "time_span", "usage_time")], TimeLimit(1, "start_time", "end_time", "allowed_time", "time_span")), 
+                         ChildData(124, "parent_email", "child_name", [Restriction(1, 123, "program_name", "start_time", "end_time", "allowed_time", "time_span", "usage_time")], TimeLimit(1, "start_time", "end_time", "allowed_time", "time_span")),
+                            ChildData(125, "parent_email", "child_name", [Restriction(1, 123, "program_name", "start_time", "end_time", "allowed_time", "time_span", "usage_time")], TimeLimit(1, "start_time", "end_time", "allowed_time", "time_span")),
+                            ChildData(126, "parent_email", "child_name", [Restriction(1, 123, "program_name", "start_time", "end_time", "allowed_time", "time_span", "usage_time")], TimeLimit(1, "start_time", "end_time", "allowed_time", "time_span")),
+                            ChildData(127, "parent_email", "child_name", [Restriction(1, 123, "program_name", "start_time", "end_time", "allowed_time", "time_span", "usage_time")], TimeLimit(1, "start_time", "end_time", "allowed_time", "time_span"))]
+        return self.children
         
 
 # ---------------------------------------------------------------------------------------------------------------------
