@@ -8,11 +8,9 @@ import threading
 def main():
     serverAPI = ServerAPI()
     mock_server = MockServerAPI()
-    # root = GUI(serverAPI)
-    root = GUI(mock_server)
+    root = GUI(serverAPI)
+    # root = GUI(mock_server)
     root.mainloop()
-    # time.sleep(5)
-    # serverAPI.login("aaaa", "aaaa")
 
 
 if __name__ == "__main__":

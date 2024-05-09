@@ -130,7 +130,7 @@ class ServerAPI:
         '''
         self.tls_protocol.send(self.build_request("auth", "login_agent", auth_str))
         response = self.tls_protocol.receive()
-        if response == "True":
+        if "True" in str(response):
             self.is_authenticated = True
             return True
         else:
@@ -168,6 +168,8 @@ class ServerAPI:
         '''
         self.tls_protocol.send(self.build_request("restrict", "update_known_programs", StringListSerializer.serialize(programs_list)))
         return self.tls_protocol.receive()
+    
+
 
 # FETCHING INFORMATION -----------------------------------------------------------------------------------------------
     @connection_exception_catcher
@@ -227,9 +229,37 @@ class ServerAPI:
         self.tls_protocol.send(self.build_request("fetch", "programs", child_name))
         return StringListSerializer.deserialize(self.tls_protocol.receive())
         
+    @authentication_needed
+    @connection_exception_catcher
+    @connection_needed
+    def agent_get_restrictions(self):
+        '''
+            This method is used to get the restrictions from the server.
+        '''
+        self.tls_protocol.send(self.build_request("fetch", "agent_restrictions"))
+        return self.tls_protocol.receive()
 
 # ---------------------------------------------------------------------------------------------------------------------
 
+    @authentication_needed
+    @connection_exception_catcher
+    @connection_needed
+    def set_stream_frame(self, frame):
+        '''
+            This method is used to set the stream frame.
+        '''
+        self.tls_protocol.send(self.build_request("fetch", "set_frame", frame))
+        return self.tls_protocol.receive()
+    
+    @authentication_needed
+    @connection_exception_catcher
+    @connection_needed
+    def get_stream_frame(self, child_name):
+        '''
+            This method is used to get the stream frame.
+        '''
+        self.tls_protocol.send(self.build_request("fetch", "get_frame", child_name))
+        return self.tls_protocol.receive()
 
 
 # CHILDREN MANAGEMENT -----------------------------------------------------------------------------------------------

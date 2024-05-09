@@ -1,9 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
-from tkinter_webcam import webcam
 from typing import Tuple
+import pickle
 
-
+from .guilibs.CTkRangeSlider.ctk_rangeslider import CTkRangeSlider
 import customtkinter as Ctk
 from .consts import *
 from PIL import Image, ImageTk
@@ -100,7 +100,7 @@ class CardFrame(Ctk.CTkFrame):
         self.view_processes_button = Ctk.CTkButton(self, text="Processes", command=self.view_child, width=VIEW_BTNS_WIDTH, height=30, font=(GENERAL_FONT, 20))
         self.view_processes_button.grid(row=3, column=1, pady=10, padx=VIEW_BTNS_PADX, columnspan=1)
 
-        self.view_screen_button = Ctk.CTkButton(self, text="Screen", command=self.view_child, width=VIEW_BTNS_WIDTH, height=30, font=(GENERAL_FONT, 20))
+        self.view_screen_button = Ctk.CTkButton(self, text="Screen", command=self.view_screen, width=VIEW_BTNS_WIDTH, height=30, font=(GENERAL_FONT, 20))
         self.view_screen_button.grid(row=3, column=2, pady=10, padx=VIEW_BTNS_PADX, columnspan=1)
 
         # self.update_active_status()
@@ -119,6 +119,17 @@ class CardFrame(Ctk.CTkFrame):
         self.parent.frame = ChildView(self.parent, self.server_api, self.child_name)
         self.parent.frame.grid(row=1, column=0, columnspan=100)
 
+    def view_screen(self):
+        print(f"Viewing screen of child {self.title.cget('text')}")
+        for card in self.parent.frame.cards:
+            card.place_forget()
+        self.parent.frame.grid_forget()
+        self.parent.frame.add_child_button.grid_forget()
+        self.parent.frame = ScreenView(self.parent, self.server_api, self.child_name)
+        self.parent.frame.grid(row=1, column=0, columnspan=100)
+
+
+
 
     def update_active_status(self):
         try:
@@ -132,7 +143,6 @@ class CardFrame(Ctk.CTkFrame):
         except:
             pass
         self.after(1000, self.update_active_status)
-
 
 class AddChildFrame(Ctk.CTkFrame):
     def __init__(self, parent, server_api, *args, **kwargs):
@@ -188,6 +198,51 @@ class AddChildFrame(Ctk.CTkFrame):
         self.parent.frame.grid(row=1, column=0, columnspan=100)
 
 
+class ScreenView(Ctk.CTkFrame):
+    def __init__(self, parent, server_api, child_name, *args, **kwargs):
+        self.parent = parent
+        self.child_name = child_name
+        self.server_api = server_api
+        super().__init__(parent, *args, **kwargs)
+        self.grid(sticky=STICKY_LAYOUT)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+
+        self.title = Ctk.CTkLabel(self, text=f"{str(child_name)}'s Screen", font=(GENERAL_FONT, TITLE_FONT_SIZE))
+        self.title.grid(row=0, column=0, pady=10, padx=10, columnspan=10)
+
+        # placeholder image
+        img = Image.open("src/GUI/dark_bg.jpg")
+        img = img.resize((800, 500))
+        self.screen_viewer = ImageTk.PhotoImage(image=img)
+        self.screen_viewer_label = Ctk.CTkLabel(self, image=self.screen_viewer, text="")
+        self.screen_viewer_label.grid(row=1, column=0, pady=10, padx=10, columnspan=10)
+
+        self.refresh_btn = Ctk.CTkButton(self, text="Refresh", command=self.refresh, width=200, height=30, font=(GENERAL_FONT, 20))
+        self.refresh_btn.grid(row=2, column=0, pady=10, padx=10)
+
+
+        self.go_back_btn = Ctk.CTkButton(self, text="Go Back", command=self.go_back, width=200, height=30, font=(GENERAL_FONT, 20))
+        self.go_back_btn.grid(row=3, column=0, pady=10, padx=10)
+
+    def refresh(self):
+        if self.server_api.is_connected and self.server_api.is_authenticated:
+            serialized_img = self.server_api.get_stream_frame(self.child_name)
+            print("serialized_img",serialized_img)
+            if serialized_img == "No frame found":
+                print("No frame found")
+                return
+            img = pickle.loads(serialized_img)
+            self.screen_viewer = ImageTk.PhotoImage(image=img)
+            self.screen_viewer_label.configure(image=self.screen_viewer)
+
+    def go_back(self):
+        self.grid_forget()
+        self.place_forget()
+
+        self.parent.frame = DashboardFrame(self.parent, self.server_api)
+        self.parent.frame.grid(row=1, column=0, columnspan=100)
+
 
 class ChildView(Ctk.CTkFrame):
     def __init__(self, parent, server_api, child_name, *args, **kwargs):
@@ -240,7 +295,9 @@ class ChildView(Ctk.CTkFrame):
         # Inserting sample data
         sample_data = self.server_api.get_restrictions(self.child_name)
 
+        print("server_api get_restrictions",sample_data)
         for data in sample_data:
+            print("data = "+ str(data))
             self.restrictions.insert("", "end", values=(data.id, data.program_name, data.start_time, data.end_time, data.allowed_time, data.time_span, data.usage_time))
 
 
@@ -333,36 +390,36 @@ class AddRestrictionFrame(Ctk.CTkFrame):
         self.each_day_label = Ctk.CTkLabel(self, text="Each Day:", font=(GENERAL_FONT, 20))
         self.each_day_label.grid(row=2, column=1, columnspan=1, pady=10, padx=10)
 
-        self.start_to_end_viewer = Ctk.CTkLabel(self, text="00:00 - 24:00", font=(GENERAL_FONT, 25))
-        self.start_to_end_viewer.grid(row=2, column=2, columnspan=1, pady=10, padx=10)
+        # self.start_to_end_viewer = Ctk.CTkLabel(self, text="00:00 - 24:00", font=(GENERAL_FONT, 25))
+        # self.start_to_end_viewer.grid(row=2, column=2, columnspan=1, pady=10, padx=10)
 
-        self.start_time_label = Ctk.CTkLabel(self, text="Start Time", font=(GENERAL_FONT, 20))
-        self.start_time_label.grid(row=4, column=0, pady=10, padx=10)
-        # self.start_time = tk.Spinbox(self, from_=0, to=24, width=3, font=(GENERAL_FONT, 25), bg=BG_COLOR, fg='#1f6aa5', bd=0, wrap=True, command=self.validate_time_c)
-        # self.start_time.grid(row=3, column=1, pady=10, padx=10)
+        # self.start_time_label = Ctk.CTkLabel(self, text="Start Time", font=(GENERAL_FONT, 20))
+        # self.start_time_label.grid(row=4, column=0, pady=10, padx=10)
 
-        # self.start_time.bind("<KeyRelease>", self.validate_time)
-
-        self.start_time = Ctk.CTkSlider(self, from_=0, to=24, width=175, height=20, button_color="#1f6aa5", button_hover_color='#144870')
-        self.start_time.grid(row=4, column=1, pady=10, padx=10)
-        self.start_time.set(0)
+        # self.start_time = Ctk.CTkSlider(self, from_=0, to=24, width=175, height=20, button_color="#1f6aa5", button_hover_color='#144870')
+        # self.start_time.grid(row=4, column=1, pady=10, padx=10)
+        # self.start_time.set(0)
         
 
-        self.end_time_label = Ctk.CTkLabel(self, text="End Time", font=(GENERAL_FONT, 20))
-        self.end_time_label.grid(row=4, column=2, pady=10, padx=10)
-        # self.end_time = tk.Spinbox(self, from_=0, to=24, width=3, font=(GENERAL_FONT, 25), bg=BG_COLOR, fg='#1f6aa5', bd=0, wrap=True, command=self.validate_time_c)
-        # self.end_time.grid(row=3, column=3, pady=10, padx=10)
-        # self.end_time.delete(0, tk.END)
-        # self.end_time.insert(0, 24)
-        # # set function to validate the time on change
-        # self.end_time.bind("<KeyRelease>", self.validate_time)
+        # self.end_time_label = Ctk.CTkLabel(self, text="End Time", font=(GENERAL_FONT, 20))
+        # self.end_time_label.grid(row=4, column=2, pady=10, padx=10)
 
-        self.end_time = Ctk.CTkSlider(self, from_=0, to=24, width=175, height=20, button_color="#1f6aa5", button_hover_color='#144870')
-        self.end_time.grid(row=4, column=3, pady=10, padx=10)
-        self.end_time.set(24)
+        # self.end_time = Ctk.CTkSlider(self, from_=0, to=24, width=175, height=20, button_color="#1f6aa5", button_hover_color='#144870')
+        # self.end_time.grid(row=4, column=3, pady=10, padx=10)
+        # self.end_time.set(24)
 
-        self.start_time.bind("<ButtonRelease-1>", self.validate_time)
-        self.end_time.bind("<ButtonRelease-1>", self.validate_time)
+        # self.start_time.bind("<ButtonRelease-1>", self.validate_time)
+        # self.end_time.bind("<ButtonRelease-1>", self.validate_time)
+
+        self.start_to_end_label = Ctk.CTkLabel(self, text="00:00 - 24:00", font=(GENERAL_FONT, 20))
+        self.start_to_end_label.grid(row=3, column=0, columnspan=4, pady=10, padx=10)
+
+        self.start_to_end_input = CTkRangeSlider(self, from_=0, to=24, width=500, height=20, button_color="#1f6aa5", button_hover_color='#144870')
+        self.start_to_end_input.grid(row=4, column=0, columnspan=4, pady=10, padx=10)
+
+        self.start_to_end_input.bind("<ButtonRelease-1>", self.validate_time)
+
+
 
 
         # self.start_time_viewer = Ctk.CTkLabel(self, text="00:00", font=(GENERAL_FONT, 20))
@@ -404,11 +461,13 @@ class AddRestrictionFrame(Ctk.CTkFrame):
 
     def add_restriction(self):
         print(f"Program: {self.program_name.get()}")
-        print(f"Start Time: {self.start_time.get()}")
-        print(f"End Time: {self.end_time.get()}")
         print(f"Allowed Time: {self.allowed_time.get()}")
         print(f"Time Span: {self.time_span.get()}")
-        self.server_api.add_restriction(self.child_name, self.program_name.get(), self.start_time.get(), self.end_time.get(), self.allowed_time.get(), self.time_span.get())
+        fixed_start_time = math.floor(self.start_to_end_input.get()[0])
+        fixed_end_time = math.ceil(self.start_to_end_input.get()[1])
+        print(f"Start Time: {fixed_start_time}")
+        print(f"End Time: {fixed_end_time}")
+        self.server_api.add_restriction(self.child_name, self.program_name.get(), str(fixed_start_time), str(fixed_end_time), self.allowed_time.get(), self.time_span.get())
         self.go_back()
 
     def go_back(self):
@@ -432,22 +491,21 @@ class AddRestrictionFrame(Ctk.CTkFrame):
 
     def validate_time(self, event):
         # Validate the end time to be greater than the start time
-        start_time = int(self.start_time.get())
-
-        end_time = int(self.end_time.get())
+        start_time = self.start_to_end_input.get()[0]
+        end_time = self.start_to_end_input.get()[1]
 
 
         if end_time <= start_time or end_time > 24:
-            self.end_time.configure(button_color='red', button_hover_color='dark red')
-            self.start_time.configure(button_color='red', button_hover_color='dark red')
+            self.start_to_end_input.configure(button_color='red', button_hover_color='red')
         else:
-            self.end_time.configure(button_color='#1f6aa5', button_hover_color='#144870')
-            self.start_time.configure(button_color='#1f6aa5', button_hover_color='#144870')
+            self.start_to_end_input.configure(button_color='#1f6aa5', button_hover_color='#144870')
 
-        # self.start_time_viewer.configure(text=str(start_time) + ":00")
-        # self.end_time_viewer.configure(text=str(end_time) + ":00")
 
-        self.start_to_end_viewer.configure(text=f"{str(start_time).zfill(2)}:00 - {str(end_time).zfill(2)}:00")
+        fixed_start_time = math.floor(start_time)
+        fixed_end_time = math.ceil(end_time)
+        self.start_to_end_input.set((fixed_start_time, fixed_end_time))
+
+        self.start_to_end_label.configure(text=f"{str(fixed_start_time).zfill(2)}:00 - {str(fixed_end_time).zfill(2)}:00")
 
         self.validate_all()
 
@@ -474,8 +532,8 @@ class AddRestrictionFrame(Ctk.CTkFrame):
         self.validate_allowed_time(None)
 
     def validate_all(self):
-        start_time = int(self.start_time.get())
-        end_time = int(self.end_time.get())
+        start_time = self.start_to_end_input.get()[0]
+        end_time = self.start_to_end_input.get()[1]
         try: 
             allowed_time = int(self.allowed_time.get())
         except ValueError:
