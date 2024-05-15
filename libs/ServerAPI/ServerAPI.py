@@ -241,25 +241,6 @@ class ServerAPI:
 
 # ---------------------------------------------------------------------------------------------------------------------
 
-    @authentication_needed
-    @connection_exception_catcher
-    @connection_needed
-    def set_stream_frame(self, frame):
-        '''
-            This method is used to set the stream frame.
-        '''
-        self.tls_protocol.send(self.build_request("fetch", "set_frame", frame))
-        return self.tls_protocol.receive()
-    
-    @authentication_needed
-    @connection_exception_catcher
-    @connection_needed
-    def get_stream_frame(self, child_name):
-        '''
-            This method is used to get the stream frame.
-        '''
-        self.tls_protocol.send(self.build_request("fetch", "get_frame", child_name))
-        return self.tls_protocol.receive()
 
 
 # CHILDREN MANAGEMENT -----------------------------------------------------------------------------------------------

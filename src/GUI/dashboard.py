@@ -218,23 +218,13 @@ class ScreenView(Ctk.CTkFrame):
         self.screen_viewer_label = Ctk.CTkLabel(self, image=self.screen_viewer, text="")
         self.screen_viewer_label.grid(row=1, column=0, pady=10, padx=10, columnspan=10)
 
-        self.refresh_btn = Ctk.CTkButton(self, text="Refresh", command=self.refresh, width=200, height=30, font=(GENERAL_FONT, 20))
-        self.refresh_btn.grid(row=2, column=0, pady=10, padx=10)
+        # self.refresh_btn = Ctk.CTkButton(self, text="Refresh", command=self.refresh, width=200, height=30, font=(GENERAL_FONT, 20))
+        # self.refresh_btn.grid(row=2, column=0, pady=10, padx=10)
 
 
         self.go_back_btn = Ctk.CTkButton(self, text="Go Back", command=self.go_back, width=200, height=30, font=(GENERAL_FONT, 20))
         self.go_back_btn.grid(row=3, column=0, pady=10, padx=10)
 
-    def refresh(self):
-        if self.server_api.is_connected and self.server_api.is_authenticated:
-            serialized_img = self.server_api.get_stream_frame(self.child_name)
-            print("serialized_img",serialized_img)
-            if serialized_img == "No frame found":
-                print("No frame found")
-                return
-            img = pickle.loads(serialized_img)
-            self.screen_viewer = ImageTk.PhotoImage(image=img)
-            self.screen_viewer_label.configure(image=self.screen_viewer)
 
     def go_back(self):
         self.grid_forget()
