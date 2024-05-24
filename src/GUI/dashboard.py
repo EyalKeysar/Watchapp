@@ -18,20 +18,19 @@ class DashboardFrame(Ctk.CTkFrame):
         self.grid(sticky=STICKY_LAYOUT)
         self.grid_columnconfigure(0, weight=1)
 
+        
+
         self.title = Ctk.CTkLabel(self, text="Dashboard", font=(GENERAL_FONT, TITLE_FONT_SIZE))
         self.title.grid(row=0, column=0, pady=10, padx=10, columnspan=100)
 
-        self.add_child_button = Ctk.CTkButton(self.parent, text="+", command=self.add_child, width=50, height=50, font=(GENERAL_FONT, 20))
+        self.add_child_button = Ctk.CTkButton(self.parent, text="+", command=self.add_child, width=30, height=50, font=(GENERAL_FONT, 20), corner_radius=20)
         self.add_child_button.grid(row=1, column=1, pady=10, padx=10)
-
-        # self.logout_button = Ctk.CTkButton(self.parent, text="➜", command=self.logout, width=70, height=50, font=(GENERAL_FONT, 25))
-        # self.logout_button.grid(row=1, column=2, pady=10, padx=40)
 
         self.server_api.get_children()
 
         self.cards = []
         max_cards_per_row = 2
-        card_width = 550  # Adjust according to your card size
+        card_width = 590  # Adjust according to your card size
         card_height = 200  # Adjust according to your card size
         row_height = card_height + 20  # Adjust vertical spacing between rows
         for i, child_data in enumerate(self.server_api.children):
@@ -57,9 +56,6 @@ class DashboardFrame(Ctk.CTkFrame):
         # self.add_child_frame = AddChildFrame(self.parent, self.server_api)
         # self.add_child_frame.grid(row=1, column=0, columnspan=100, pady=110)
 
-    def logout(self):
-        pass
-
 class CardFrame(Ctk.CTkFrame):
     def __init__(self, parent, server_api, child_data, *args, **kwargs):
         self.server_api = server_api
@@ -69,7 +65,6 @@ class CardFrame(Ctk.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
-        self.default_fg_color = "brown"
         self.child_name = child_data.child_name
         
         print("child_data",child_data)
@@ -176,7 +171,9 @@ class AddChildFrame(Ctk.CTkFrame):
                         pady=LOGIN_Y_PADDING,
                         padx=LOGIN_X_PADDING)
         
-        self.go_back_btn = Ctk.CTkButton(self, text="Go Back", command=self.go_back, width=LOGIN_BTN_WIDTH, height=LOGIN_BTN_HEIGHT, font=LOGIN_BTN_FONT)
+        self.go_back_btn = Ctk.CTkButton(self, text="Go Back", command=self.go_back, 
+                                         width=200, height=30, 
+                                         font=(GENERAL_FONT, 20))
         self.go_back_btn.grid(row=6, column=0, 
                         pady=LOGIN_Y_PADDING,
                         padx=LOGIN_X_PADDING)
@@ -251,7 +248,7 @@ class ChildView(Ctk.CTkFrame):
         COLUMNS = ("id", "program_name", "start_time", "end_time", "allowed_time", "time_span", "usage")
 
         # Creating Treeview widget
-        self.restrictions = ttk.Treeview(self, columns=COLUMNS, show="headings", height=20)
+        self.restrictions = ttk.Treeview(self, columns=COLUMNS, show="headings", height=21)
         self.restrictions.grid(row=1, column=0, pady=10, padx=10, columnspan=10, sticky=tk.NSEW)
 
         # Configuring style for Treeview

@@ -48,9 +48,9 @@ class LogoFrame(Ctk.CTkFrame):
         image = Image.open(path)
         image = image.resize((300, 39))
         photo = ImageTk.PhotoImage(image)
-        label = Ctk.CTkLabel(self, text="", image=photo, fg_color=kwargs.get("fg_color"))
-        label.image = photo
-        label.grid(row=0, column=0, pady=10, padx=10, sticky="w")
+        self.label = Ctk.CTkLabel(self, text="", image=photo, fg_color=kwargs.get("fg_color"))
+        self.label.image = photo
+        self.label.grid(row=0, column=0, pady=10, padx=10, sticky="w")
 
         
         self.connection_status = Ctk.CTkLabel(self, text=DISCONNECTED_TEXT, font=("Arial", 30), fg_color=kwargs.get("fg_color"), text_color=DISCONNECTED_COLOR)

@@ -1,7 +1,6 @@
 CTkMessagebox==2.5
 CTkMessagebox==2.5
 customtkinter==5.2.1
-Pillow==10.1.0
 Pillow==10.3.0
 pycryptodome==3.20.0
 tkinter_webcam==1.0.9
