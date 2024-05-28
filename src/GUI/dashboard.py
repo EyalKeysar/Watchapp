@@ -215,15 +215,33 @@ class ScreenView(Ctk.CTkFrame):
         self.screen_viewer_label = Ctk.CTkLabel(self, image=self.screen_viewer, text="")
         self.screen_viewer_label.grid(row=1, column=0, pady=10, padx=10, columnspan=10)
 
-        # self.refresh_btn = Ctk.CTkButton(self, text="Refresh", command=self.refresh, width=200, height=30, font=(GENERAL_FONT, 20))
-        # self.refresh_btn.grid(row=2, column=0, pady=10, padx=10)
+        self.is_subscribed = "True" == self.server_api.subscribe(self.child_name, "screen")
+        print("is_subscribed", self.is_subscribed)
+
+        self.refresh_btn = Ctk.CTkButton(self, text="Refresh", command=self.refresh, width=200, height=30, font=(GENERAL_FONT, 20))
+        self.refresh_btn.grid(row=2, column=0, pady=10, padx=10)
 
 
         self.go_back_btn = Ctk.CTkButton(self, text="Go Back", command=self.go_back, width=200, height=30, font=(GENERAL_FONT, 20))
         self.go_back_btn.grid(row=3, column=0, pady=10, padx=10)
 
+    def refresh(self):
+        # placeholder image
+        if self.is_subscribed:
+            raw_frame = self.server_api.get_frame(self.child_name, "screen")
+            if raw_frame == "None":
+                return
+            img = Image.frombytes("RGB", (800, 500), raw_frame, "raw")
+            self.screen_viewer = ImageTk.PhotoImage(image=img)
+            self.screen_viewer_label.configure(image=self.screen_viewer)
+        else:
+            img = Image.open("src/GUI/light_bg.jpg")
+            img = img.resize((800, 500))
+            self.screen_viewer = ImageTk.PhotoImage(image=img)
+            self.screen_viewer_label.configure(image=self.screen_viewer)
 
     def go_back(self):
+        self.server_api.unsubscribe(self.child_name, "screen")
         self.grid_forget()
         self.place_forget()
 

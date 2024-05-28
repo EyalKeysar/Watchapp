@@ -255,6 +255,50 @@ class ServerAPI:
         return self.tls_protocol.receive()
 
 
+# STREAMING ---------------------------------------------------------------------------------------------------------
+
+
+    @authentication_needed
+    @connection_exception_catcher
+    @connection_needed
+    def subscribe(self, child_name, type):
+        '''
+            This method is used to subscribe to the server.
+        '''
+        self.tls_protocol.send(self.build_request("stream", "subscribe", child_name, type))
+        return self.tls_protocol.receive()
+    
+    @authentication_needed
+    @connection_exception_catcher
+    @connection_needed
+    def unsubscribe(self, child_name, type):
+        '''
+            This method is used to unsubscribe from the server.
+        '''
+        self.tls_protocol.send(self.build_request("stream", "unsubscribe", child_name, type))
+        return self.tls_protocol.receive()
+    
+    @authentication_needed
+    @connection_exception_catcher
+    @connection_needed
+    def get_frame(self, child_name, type):
+        '''
+            This method is used to get a frame from the server.
+        '''
+        self.tls_protocol.send(self.build_request("stream", "get_frame", child_name, type))
+        return self.tls_protocol.receive()
+    
+    @authentication_needed
+    @connection_exception_catcher
+    @connection_needed
+    def set_frame(self, type, frame):
+        '''
+            This method is used to set a frame to the server.
+        '''
+        self.tls_protocol.send(self.build_request("stream", "set_frame", type, frame))
+        return self.tls_protocol.receive()
+
+
 if __name__ == '__main__':
     server = ServerAPI()
     print(server.get_info())
