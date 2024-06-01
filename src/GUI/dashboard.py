@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from typing import Tuple
 import pickle
+import base64
 
 from .guilibs.CTkRangeSlider.ctk_rangeslider import CTkRangeSlider
 import customtkinter as Ctk
@@ -228,11 +229,25 @@ class ScreenView(Ctk.CTkFrame):
     def refresh(self):
         # placeholder image
         if self.is_subscribed:
+            print("Getting frame")
             raw_frame = self.server_api.get_frame(self.child_name, "screen")
+            print("raw_frame", raw_frame[:10])
             if raw_frame == "None":
                 return
-            img = Image.frombytes("RGB", (800, 500), raw_frame, "raw")
+            try:
+                frame = base64.b64decode(raw_frame)
+                frame = pickle.loads(frame)
+                # save the frame to a file
+                frame.save("src/GUI/aaaaasdasdasdasd.png")
+            except Exception as e:
+                if "Invalid base64-encoded string" in str(e):
+                    print("bytes: ", raw_frame)
+                print(e)
+                return
+
+            img = Image.open(frame)
             self.screen_viewer = ImageTk.PhotoImage(image=img)
+            
             self.screen_viewer_label.configure(image=self.screen_viewer)
         else:
             img = Image.open("src/GUI/light_bg.jpg")
@@ -355,6 +370,8 @@ class ChildView(Ctk.CTkFrame):
         selected_item = self.restrictions.selection()[0]
         self.server_api.remove_restriction(self.child_name, self.restrictions.item(selected_item, "values")[1])
         self.restrictions.delete(selected_item)
+        self.modify_restriction_button.configure(state='disabled')
+        self.delete_restriction_button.configure(state='disabled', text_color='red')
 
     def go_back(self):
         self.grid_forget()
