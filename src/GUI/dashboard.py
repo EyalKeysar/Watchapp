@@ -219,12 +219,20 @@ class ScreenView(Ctk.CTkFrame):
         self.is_subscribed = "True" == self.server_api.subscribe(self.child_name, "screen")
         print("is_subscribed", self.is_subscribed)
 
-        self.refresh_btn = Ctk.CTkButton(self, text="Refresh", command=self.refresh, width=200, height=30, font=(GENERAL_FONT, 20))
-        self.refresh_btn.grid(row=2, column=0, pady=10, padx=10)
+        # self.refresh_btn = Ctk.CTkButton(self, text="Refresh", command=self.refresh, width=200, height=30, font=(GENERAL_FONT, 20))
+        # self.refresh_btn.grid(row=2, column=0, pady=10, padx=10)
+        
+        # refresh every 1 second
+        self.after(1000, self.refresh_loop)
+
 
 
         self.go_back_btn = Ctk.CTkButton(self, text="Go Back", command=self.go_back, width=200, height=30, font=(GENERAL_FONT, 20))
         self.go_back_btn.grid(row=3, column=0, pady=10, padx=10)
+
+    def refresh_loop(self):
+        self.refresh()
+        self.after(2000, self.refresh_loop)
 
     def refresh(self):
         # placeholder image
@@ -237,15 +245,16 @@ class ScreenView(Ctk.CTkFrame):
             try:
                 frame = base64.b64decode(raw_frame)
                 frame = pickle.loads(frame)
-                # save the frame to a file
-                frame.save("src/GUI/aaaaasdasdasdasd.png")
             except Exception as e:
                 if "Invalid base64-encoded string" in str(e):
                     print("bytes: ", raw_frame)
                 print(e)
                 return
 
-            img = Image.open(frame)
+            # img = Image.open(frame)
+            # frame is 'JpegImageFile'
+            img = frame
+            img.resize((800, 500))
             self.screen_viewer = ImageTk.PhotoImage(image=img)
             
             self.screen_viewer_label.configure(image=self.screen_viewer)
