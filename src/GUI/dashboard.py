@@ -74,7 +74,7 @@ class CardFrame(Ctk.CTkFrame):
         self.title = Ctk.CTkLabel(self, text=child_data.child_name, font=(GENERAL_FONT, 30))
         self.title.grid(row=0, column=0, pady=10, padx=50, columnspan=3)
 
-        self.active_status = Ctk.CTkLabel(self, text="Inactive", font=(GENERAL_FONT, 15),text_color="red")
+        self.active_status = Ctk.CTkLabel(self, text="Active", font=(GENERAL_FONT, 15),text_color="green")
         self.active_status.grid(row=0, column=2, pady=10)
         
         self.name = Ctk.CTkLabel(self, text="Statistics", font=(GENERAL_FONT, 20))
@@ -93,7 +93,7 @@ class CardFrame(Ctk.CTkFrame):
         self.view_button = Ctk.CTkButton(self, text="Restrictions", command=self.view_child, width=VIEW_BTNS_WIDTH, height=30, font=(GENERAL_FONT, 20))
         self.view_button.grid(row=3, column=0, pady=10, padx=VIEW_BTNS_PADX, columnspan=1)
 
-        self.view_processes_button = Ctk.CTkButton(self, text="Processes", command=self.view_child, width=VIEW_BTNS_WIDTH, height=30, font=(GENERAL_FONT, 20))
+        self.view_processes_button = Ctk.CTkButton(self, text="Processes", command=self.view_processes, width=VIEW_BTNS_WIDTH, height=30, font=(GENERAL_FONT, 20))
         self.view_processes_button.grid(row=3, column=1, pady=10, padx=VIEW_BTNS_PADX, columnspan=1)
 
         self.view_screen_button = Ctk.CTkButton(self, text="Screen", command=self.view_screen, width=VIEW_BTNS_WIDTH, height=30, font=(GENERAL_FONT, 20))
@@ -124,10 +124,20 @@ class CardFrame(Ctk.CTkFrame):
         self.parent.frame = ScreenView(self.parent, self.server_api, self.child_name)
         self.parent.frame.grid(row=1, column=0, columnspan=100)
 
+    def view_processes(self):
+        print(f"Viewing processes of child {self.title.cget('text')}")
+        for card in self.parent.frame.cards:
+            card.place_forget()
+        self.parent.frame.grid_forget()
+        self.parent.frame.add_child_button.grid_forget()
+        self.parent.frame = ProcessesView(self.parent, self.server_api, self.child_name)
+        self.parent.frame.grid(row=1, column=0, columnspan=100)
+
 
 
 
     def update_active_status(self):
+        # updates card's active status
         try:
             raise NotImplementedError
             status = False # TODO: get status from server
@@ -139,6 +149,58 @@ class CardFrame(Ctk.CTkFrame):
         except:
             pass
         self.after(1000, self.update_active_status)
+
+class ProcessesView(Ctk.CTkFrame):
+    def __init__(self, parent, server_api, child_name, *args, **kwargs):
+        self.parent = parent
+        self.child_name = child_name
+        self.server_api = server_api
+        super().__init__(parent, *args, **kwargs)
+        self.grid(sticky=STICKY_LAYOUT)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+
+        self.title = Ctk.CTkLabel(self, text=f"{str(child_name)}'s Processes usage", font=(GENERAL_FONT, TITLE_FONT_SIZE))
+        self.title.grid(row=0, column=0, pady=10, padx=10, columnspan=10)
+
+        columns = ("id", "program_name", "usage")
+
+        self.programs = ttk.Treeview(self, columns=columns, show="headings", height=21)
+        self.programs.grid(row=1, column=0, pady=10, padx=10, columnspan=10, sticky=tk.NSEW)
+        
+        style = ttk.Style(self)
+        style.theme_use('default')
+        style.configure('Dark.Treeview', background='#363636', foreground='white', fieldbackground='#363636', font=(GENERAL_FONT, 15))
+        style.configure('Dark.Treeview.Heading', background='#363636', foreground='white', font=(GENERAL_FONT, 15))
+        style.map('Treeview', background=[('selected', '#3e465c')], foreground=[('selected', 'white')])
+        style.map('Treeview.Heading', background=[('active', '#363636')])
+        self.programs.configure(style='Dark.Treeview')
+
+        self.programs.heading("id", text="ID")
+        self.programs.heading("program_name", text="Program Name")
+        self.programs.heading("usage", text="Usage")
+
+        self.programs.column("id", width=20)
+        self.programs.column("program_name", width=100)
+        self.programs.column("usage", width=200)
+
+        sample_data = self.server_api.get_programs(self.child_name)
+        for data in sample_data:
+            raw_time = data[2]
+            formatted_time = f"{raw_time // 3600}h {raw_time % 3600 // 60}m {raw_time % 60}s"
+            self.programs.insert("", "end", values=(data[0], data[1], formatted_time))
+
+        self.go_back_btn = Ctk.CTkButton(self, text="Go Back", command=self.go_back, width=200, height=30, font=(GENERAL_FONT, 20))
+        self.go_back_btn.grid(row=3, column=0, pady=10, padx=10)
+
+    def go_back(self):
+        self.grid_forget()
+        self.place_forget()
+
+        self.parent.frame = DashboardFrame(self.parent, self.server_api)
+        self.parent.frame.grid(row=1, column=0, columnspan=100)
+
+
 
 class AddChildFrame(Ctk.CTkFrame):
     def __init__(self, parent, server_api, *args, **kwargs):
@@ -219,9 +281,6 @@ class ScreenView(Ctk.CTkFrame):
         self.is_subscribed = "True" == self.server_api.subscribe(self.child_name, "screen")
         print("is_subscribed", self.is_subscribed)
 
-        # self.refresh_btn = Ctk.CTkButton(self, text="Refresh", command=self.refresh, width=200, height=30, font=(GENERAL_FONT, 20))
-        # self.refresh_btn.grid(row=2, column=0, pady=10, padx=10)
-        
         # refresh every 1 second
         self.after(1000, self.refresh_loop)
 
@@ -232,7 +291,7 @@ class ScreenView(Ctk.CTkFrame):
 
     def refresh_loop(self):
         self.refresh()
-        self.after(2000, self.refresh_loop)
+        self.after(1000, self.refresh_loop)
 
     def refresh(self):
         # placeholder image
@@ -251,8 +310,6 @@ class ScreenView(Ctk.CTkFrame):
                 print(e)
                 return
 
-            # img = Image.open(frame)
-            # frame is 'JpegImageFile'
             img = frame
             img.resize((800, 500))
             self.screen_viewer = ImageTk.PhotoImage(image=img)
@@ -266,6 +323,7 @@ class ScreenView(Ctk.CTkFrame):
 
     def go_back(self):
         self.server_api.unsubscribe(self.child_name, "screen")
+        self.is_subscribed = False
         self.grid_forget()
         self.place_forget()
 
@@ -287,10 +345,10 @@ class ChildView(Ctk.CTkFrame):
         self.title.grid(row=0, column=0, pady=10, padx=10, columnspan=10)
 
 
-        COLUMNS = ("id", "program_name", "start_time", "end_time", "allowed_time", "time_span", "usage")
+        columns = ("id", "program_name", "start_time", "end_time", "allowed_time", "time_span", "usage")
 
         # Creating Treeview widget
-        self.restrictions = ttk.Treeview(self, columns=COLUMNS, show="headings", height=21)
+        self.restrictions = ttk.Treeview(self, columns=columns, show="headings", height=21)
         self.restrictions.grid(row=1, column=0, pady=10, padx=10, columnspan=10, sticky=tk.NSEW)
 
         # Configuring style for Treeview
@@ -418,8 +476,8 @@ class AddRestrictionFrame(Ctk.CTkFrame):
         self.program_name.configure(dropdown_font=(GENERAL_FONT, 20))
         self.program_name.grid(row=1, column=2, columnspan=2, pady=10, padx=10)
 
-        self.each_day_label = Ctk.CTkLabel(self, text="Each Day:", font=(GENERAL_FONT, 20))
-        self.each_day_label.grid(row=2, column=1, columnspan=1, pady=10, padx=10)
+        self.each_day_label = Ctk.CTkLabel(self, text="Daily allowed time range:", font=(GENERAL_FONT, 20))
+        self.each_day_label.grid(row=2, column=1, columnspan=2, pady=10, padx=10)
 
         # self.start_to_end_viewer = Ctk.CTkLabel(self, text="00:00 - 24:00", font=(GENERAL_FONT, 25))
         # self.start_to_end_viewer.grid(row=2, column=2, columnspan=1, pady=10, padx=10)

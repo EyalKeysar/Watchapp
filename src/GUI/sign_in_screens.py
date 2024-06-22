@@ -159,7 +159,7 @@ class SignUpFrame(Ctk.CTkFrame):
             self.server_api.signup(self.email.get(), self.password.get(), self.username.get())
             if self.server_api.is_authenticated == False:
                 print("Sign up failed")
-                self.email_already_exists = Ctk.CTkLabel(self, text=" * Email already exists", font=(GENERAL_FONT, 20), text_color="red")
+                self.email_already_exists = Ctk.CTkLabel(self, text=" * Invalid Email (or already used)", font=(GENERAL_FONT, 20), text_color="red")
                 self.email_already_exists.grid(row=email_already_exists_r, column=email_already_exists_c, columnspan=MID_COL_SPAN_SIGNUP, pady=SIGN_UP_ERROR_PADY)
             else:
                 self.grid_forget()
